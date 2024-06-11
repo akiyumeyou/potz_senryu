@@ -1,0 +1,41 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-li6eDNCx.css",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/senryu.css": {
+    "file": "assets/senryu-D4xhgMdh.css",
+    "src": "resources/css/senryu.css",
+    "isEntry": true
+  },
+  "resources/css/tweet.css": {
+    "file": "assets/tweet-M1f5qUCW.css",
+    "src": "resources/css/tweet.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-Bg1aHGgo.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/chat.js": {
+    "file": "assets/chat-Br3Mrrk6.js",
+    "name": "chat",
+    "src": "resources/js/chat.js",
+    "isEntry": true
+  },
+  "resources/js/senryu.js": {
+    "file": "assets/senryu-CIrODjdd.js",
+    "name": "senryu",
+    "src": "resources/js/senryu.js",
+    "isEntry": true
+  },
+  "resources/js/stamp.js": {
+    "file": "assets/stamp-DfRcZWo5.js",
+    "name": "stamp",
+    "src": "resources/js/stamp.js",
+    "isEntry": true
+  }
+}

@@ -7,6 +7,7 @@ use App\Models\Senryu;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Intervention\Image\Facades\Image;
 
 class SenryuController extends Controller
 {
@@ -28,9 +29,9 @@ class SenryuController extends Controller
     {
         $request->validate([
             'theme' => 'nullable|string|max:128',
-            's_text1' => 'nullable|string|max:128',
-            's_text2' => 'nullable|string|max:128',
-            's_text3' => 'nullable|string|max:128',
+            's_text1' => 'nullable|string|max:10',
+            's_text2' => 'nullable|string|max:10',
+            's_text3' => 'nullable|string|max:10',
             'img_path' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:20480', // 20MBまでの画像または動画
         ]);
 
@@ -42,6 +43,7 @@ class SenryuController extends Controller
 
             if ($request->hasFile('img_path')) {
                 Log::info('File is present. Processing upload.');
+
                 $filePath = $request->file('img_path')->store('public/senryu');
                 $data['img_path'] = Storage::url($filePath);
                 Log::info('File uploaded to: ' . $filePath);
@@ -60,6 +62,7 @@ class SenryuController extends Controller
         }
     }
 
+
     // 詳細表示
     public function show(Senryu $senryu)
     {
@@ -77,18 +80,28 @@ class SenryuController extends Controller
     {
         $request->validate([
             'theme' => 'nullable|string|max:128',
-            's_text1' => 'nullable|string|max:128',
-            's_text2' => 'nullable|string|max:128',
-            's_text3' => 'nullable|string|max:128',
+            's_text1' => 'nullable|string|max:10',
+            's_text2' => 'nullable|string|max:10',
+            's_text3' => 'nullable|string|max:10',
             'img_path' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:20480', // 20MBまでの画像または動画
-            'iine' => 'required|integer',
         ]);
 
         try {
             $data = $request->except('img_path');
 
             if ($request->hasFile('img_path')) {
-                $filePath = $request->file('img_path')->store('public/senryu');
+                $filePath = '';
+
+                if (strpos($request->file('img_path')->getMimeType(), 'image') !== false) {
+                    $filePath = $request->file('img_path')->store('public/senryu');
+                } else {
+                    $filePath = $request->file('img_path')->store('public/senryu');
+                }
+
+                if ($senryu->img_path) {
+                    Storage::delete(str_replace('/storage/', 'public/', $senryu->img_path));
+                }
+
                 $data['img_path'] = Storage::url($filePath);
             }
 
@@ -110,4 +123,10 @@ class SenryuController extends Controller
             return redirect()->back()->with('error', 'エラーが発生しました: ' . $e->getMessage());
         }
     }
+    public function updateIine(Request $request, Senryu $senryu)
+    {
+    $senryu->increment('iine');
+    return response()->json(['iine' => $senryu->iine]);
+    }
+
 }

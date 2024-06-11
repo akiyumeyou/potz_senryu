@@ -3,137 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>川柳一覧</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
-        body {
-            font-size: 20px;
-            background-color: #FFFAF0; /* 薄いオレンジ色 */
-            margin: 0;
-            padding-top: 80px;
-            padding-bottom: 60px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .senryu-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            width: 90%;
-            margin-top: 20px;
-        }
-
-        .senryu-item {
-            background-color: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
         .senryu-text {
             writing-mode: vertical-rl;
             text-orientation: upright;
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
+            font-size: 28px; 
 
-        .senryu-image {
+            margin-bottom: 1px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            height: 280px; /* テキスト表示エリアの高さを調整 */
+        }
+        .senryu-text p {
+            margin: 0;
+            margin-bottom: 7px; /* テキスト間の空間を5pxに設定 */
+        }
+        .senryu-media {
             width: 100%;
-            max-width: 300px;
             height: auto;
-            margin-bottom: 10px;
+            max-height: 300px;
+            object-fit: contain;
+            margin-top: 5px;
         }
-
         .senryu-meta {
             display: flex;
             justify-content: space-between;
             width: 100%;
             padding: 0 10px;
+            margin-top: 5px;
         }
-
-        .senryu-meta span {
-            font-size: 18px;
-        }
-
-        .senryu-meta .iine-btn {
+        .senryu-item {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            cursor: pointer;
-        }
-
-        .senryu-actions {
-            display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             width: 100%;
-            padding: 10px;
-        }
-
-        .senryu-actions a, .senryu-actions form {
-            margin-right: 10px;
-        }
-
-        .senryu-actions form {
-            display: inline;
-        }
-
-        @media (max-width: 768px) {
-            .senryu-container {
-                grid-template-columns: 1fr;
-            }
+            height: 580px; /* カードの高さを調整 */
         }
     </style>
 </head>
-<body>
-    <header>
-        <h1>シルバー川柳一覧</h1>
-        <nav>
-            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('最初のページへ　') }}
-            </x-nav-link>
-            <x-nav-link :href="route('senryus.create')" :active="request()->routeIs('senryus.create')">
-                {{ __('新規川柳作成') }}
-            </x-nav-link>
+<body class="bg-yellow-50 flex flex-col items-center justify-center min-h-screen py-20">
+    <header class="mb-10">
+        <h1 class="text-3xl font-bold">シルバー川柳一覧</h1>
+        <nav class="mt-4">
+            <a href="{{ route('dashboard') }}" class="text-blue-500 hover:underline">最初のページへ</a>
+            <a href="{{ route('senryus.create') }}" class="ml-4 text-blue-500 hover:underline">新規投稿</a>
         </nav>
     </header>
-
-    <div class="senryu-container">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-11/12">
         @foreach ($senryus as $senryu)
-            <div class="senryu-item">
+            <div class="bg-white p-4 rounded-lg shadow-lg senryu-item">
                 <div class="senryu-text">
                     <p>{{ $senryu->s_text1 }}</p>
                     <p>{{ $senryu->s_text2 }}</p>
                     <p>{{ $senryu->s_text3 }}</p>
                 </div>
                 @if ($senryu->img_path)
-                    <img src="{{ $senryu->img_path }}" alt="senryu image" class="senryu-image">
+                    @if (strpos($senryu->img_path, '.mp4') !== false || strpos($senryu->img_path, '.mov') !== false || strpos($senryu->img_path, '.avi') !== false)
+                        <video src="{{ $senryu->img_path }}" class="senryu-media" controls></video>
+                    @else
+                        <img src="{{ $senryu->img_path }}" class="senryu-media">
+                    @endif
                 @endif
-                <div class="senryu-meta">
-                    <span>{{ $senryu->user_name }}</span>
-                    <span class="iine-btn">{{ $senryu->iine }} いいね</span>
+                <div class="senryu-meta mt-2">
+                    @if (Auth::id() === $senryu->user_id)
+                        <a href="{{ route('senryus.edit', $senryu->id) }}" class="text-blue-500 hover:underline">{{ $senryu->user_name }}</a>
+                    @else
+                        <span>{{ $senryu->user_name }}</span>
+                    @endif
+                    <!-- <span class="iine-btn">{{ $senryu->iine }} <i class="fa fa-thumbs-up"></i></span> -->
+                    <span class="iine-btn" data-id="{{ $senryu->id }}">{{ $senryu->iine }} <i class="fa fa-thumbs-up"></i></span>
+
+                    <a href="public/img/iine.png"></a>
                 </div>
-                @if ($senryu->user_id == Auth::id())
-                    <div class="senryu-actions">
-                        <a href="{{ route('senryus.edit', $senryu->id) }}">編集</a>
-                        <form action="{{ route('senryus.destroy', $senryu->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit">削除</button>
-                        </form>
-                    </div>
-                @endif
             </div>
         @endforeach
     </div>
-
-    <footer>
+    <footer class="mt-10">
         <p>© 2024 川柳アプリ</p>
     </footer>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('.iine-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const senryuId = this.getAttribute('data-id');
+    
+                fetch(`/senryus/${senryuId}/iine`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ id: senryuId })
+                })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+                })
+                .then(data => {
+                    this.innerHTML = `❤️ ${data.iine}`;
+                })
+                .catch(error => console.error('Error:', error));
+
+                });
+        });
+    });
+</script>    
 </body>
 </html>
-
