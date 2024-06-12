@@ -6,9 +6,8 @@ use App\Http\Controllers\TweetController;
 use App\Http\Controllers\AudioController;
 use App\Http\Controllers\StampController;
 use App\Http\Controllers\ChatController;
-
 use App\Http\Controllers\SenryuController;
-
+use App\Http\Controllers\GoogleLoginController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -25,7 +24,6 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
-use App\Http\Controllers\GoogleLoginController;
 
 Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])
     ->name('login.google');
@@ -34,19 +32,15 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
     ->name('login.google.callback');
 
 Route::post('/stamp/store', [StampController::class, 'store'])->name('stamp.store');
-
 Route::get('/stamps/create', [StampController::class, 'create'])->name('stamp.create');
-// routes/web.php
-
-
-Route::post('/upload-stamp', [StampController::class, 'store'])->name('stamp.store');
-
+Route::get('/stamps', [StampController::class, 'index'])->name('stamp.index');
+Route::delete('/stamps/{stamp}', [StampController::class, 'destroy'])->name('stamp.destroy');
 
 Route::resource('tweets', TweetController::class);
 
 Route::post('/transcribe', [TweetController::class, 'transcribe'])->name('transcribe');
 Route::middleware(['auth'])->group(function () {
-Route::resource('tweets', TweetController::class);
+    Route::resource('tweets', TweetController::class);
 });
 Route::post('/tweets', [TweetController::class, 'store'])->name('tweets.store');
 Route::get('/tweets', [TweetController::class, 'index'])->name('tweets.index');
@@ -58,9 +52,7 @@ Route::get('/chat', function () {
 
 Route::get('/conversation-history', [ChatController::class, 'getConversationHistory']);
 
-
 Route::post('/chat', [ChatController::class, 'handle'])->name('chat');
 
 Route::resource('senryus', SenryuController::class);
 Route::post('/senryus/{senryu}/iine', [SenryuController::class, 'updateIine']);
-

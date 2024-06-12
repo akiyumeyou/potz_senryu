@@ -6,6 +6,7 @@ use App\Models\Stamp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\ImageManagerStatic;
 use Illuminate\Support\Facades\Log;
 
 
@@ -15,7 +16,8 @@ class StampController extends Controller
 {
     public function index()
     {
-        // 必要に応じて実装
+        $images = Stamp::all(); // ユーザー情報を取得しない
+        return view('stamp.index', compact('images'));
     }
 
     public function create()
@@ -78,8 +80,11 @@ class StampController extends Controller
         // 必要に応じて実装
     }
 
-    public function destroy(Stamp $stamp)
+    public function destroy($id)
     {
-        // 必要に応じて実装
+        $stamp = Stamp::findOrFail($id);
+        $stamp->delete();
+
+        return redirect()->route('stamp.index')->with('success', 'スタンプが削除されました。');
     }
 }

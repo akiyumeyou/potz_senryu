@@ -105,6 +105,9 @@
                             <x-nav-link :href="route('stamp.create')" :active="request()->routeIs('stamps.create')">
                                 {{ __('スタンプ作成') }}
                             </x-nav-link>
+                            <x-nav-link :href="route('stamp.index')" :active="request()->routeIs('stamps.index')">
+                                {{ __('スタンプ一覧') }}
+                            </x-nav-link>
                         </div>
                     </div>
                 </div>
