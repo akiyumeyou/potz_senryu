@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 
@@ -14,10 +16,27 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class StampController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $images = Stamp::all(); // ユーザー情報を取得しない
-        return view('stamp.index', compact('images'));
+        $query = Stamp::query();
+
+
+        if ($request->has('month')) {
+            try {
+                $month = Carbon::parse($request->month);
+                $query->whereYear('created_at', $month->year)->whereMonth('created_at', $month->month);
+            } catch (\Exception $e) {
+                return back()->with('error', '無効な日付形式です。');
+            }
+        }
+        $images = $query->orderBy('created_at', 'desc')->get();
+        $images = Stamp::orderBy('created_at', 'desc')->get();
+
+    // 月ごとのユニークなリストを取得
+    $dates = Stamp::select(DB::raw('DISTINCT DATE_FORMAT(created_at, "%Y-%m") as month'))
+                   ->pluck('month');
+
+        return view('stamp.index', compact('images', 'dates'));
     }
 
     public function create()

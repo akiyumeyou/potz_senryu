@@ -45,25 +45,24 @@
 
                         <button type="button" id="apply-text" class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">テキスト反映</button>
 
-                        <div id="image-container" style="position: relative; width: 320px; height: 445px; margin: auto;" class="mt-4">
-                            <canvas id="preview-canvas" width="320" height="445"></canvas>
-                        </div>
-
-                        <img id="generated-image" class="mt-4" style="display: none;" />
-                        <div id="file-name-preview" class="mt-2"></div>
-
                         <label for="image" class="block text-sm font-medium text-gray-700 mt-4">画像:</label>
                         <div id="drop-area" class="border-dashed border-2 border-gray-300 py-4 text-center">
                             <p>画像をドラッグ＆ドロップまたは<span class="file-input-label cursor-pointer text-blue-500">クリック</span>して選択</p>
                             <input type="file" id="image" name="image" hidden>
                             <div id="file-name" class="mt-2"></div>
                         </div>
+
+                        <div id="image-container" style="position: relative; width: 320px; height: 445px; margin: auto;" class="mt-4">
+                            <canvas id="preview-canvas" width="320" height="445"></canvas>
+                        </div>
+
+                        <input type="submit" value="保存" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                     </div>
-                    <input type="submit" value="保存" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                 </form>
             </div>
         </div>
     </div>
     @vite('resources/js/stamp.js')
 </x-app-layout>
+
 

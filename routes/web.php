@@ -31,6 +31,7 @@ Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])
     ->name('login.google.callback');
 
+Route::resource('senryus', SenryuController::class);
 Route::post('/stamp/store', [StampController::class, 'store'])->name('stamp.store');
 Route::get('/stamps/create', [StampController::class, 'create'])->name('stamp.create');
 Route::get('/stamps', [StampController::class, 'index'])->name('stamp.index');

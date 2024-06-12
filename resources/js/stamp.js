@@ -96,53 +96,100 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // フォーム送信時にキャンバスの内容を画像として送信
-    document.getElementById('stamp-form').addEventListener('submit', function(e) {
-        e.preventDefault();
+// フォーム送信時にキャンバスの内容を画像として送信
+document.getElementById('stamp-form').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-        if (!img) {
-            alert("先に画像を選択してください。");
-            return;
+    if (!img) {
+        alert("先に画像を選択してください。");
+        return;
+    }
+
+    const dataURL = canvas.toDataURL('image/png');
+    const binary = atob(dataURL.split(',')[1]);
+    const array = [];
+    for (let i = 0; i < binary.length; i++) {
+        array.push(binary.charCodeAt(i));
+    }
+    const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+    const formData = new FormData(this);
+    formData.append('image', file, `${originalFileName}.png`);
+
+    fetch(this.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         }
-
-        const dataURL = canvas.toDataURL('image/png');
-        const binary = atob(dataURL.split(',')[1]);
-        const array = [];
-        for (let i = 0; i < binary.length; i++) {
-            array.push(binary.charCodeAt(i));
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok ' + response.statusText);
         }
-        const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
-        const formData = new FormData(this);
-        formData.append('image', file, `${originalFileName}.png`);
-
-        // デバッグ用にFormDataの内容をログに出力
-        for (let pair of formData.entries()) {
-            console.log(pair[0] + ': ' + pair[1]);
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // ここでポップアップアラートを表示せずにリダイレクト
+            window.location.href = '/tweets';
+        } else {
+            alert('スタンプの作成に失敗しました。 ' + data.message);
         }
-
-        fetch(this.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok ' + response.statusText);
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.success) {
-                alert('スタンプが作成されました。');
-                window.location.reload();
-            } else {
-                alert('スタンプの作成に失敗しました。 ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('エラーが発生しました:', error);
-            alert('スタンプの作成に失敗しました。 ' + error.message);
-        });
+    })
+    .catch(error => {
+        console.error('エラーが発生しました:', error);
+        alert('スタンプの作成に失敗しました。 ' + error.message);
     });
+});
+
+
+    // document.getElementById('stamp-form').addEventListener('submit', function(e) {
+    //     e.preventDefault();
+
+    //     if (!img) {
+    //         alert("先に画像を選択してください。");
+    //         return;
+    //     }
+
+    //     const dataURL = canvas.toDataURL('image/png');
+    //     const binary = atob(dataURL.split(',')[1]);
+    //     const array = [];
+    //     for (let i = 0; i < binary.length; i++) {
+    //         array.push(binary.charCodeAt(i));
+    //     }
+    //     const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
+    //     const formData = new FormData(this);
+    //     formData.append('image', file, `${originalFileName}.png`);
+
+    //     // デバッグ用にFormDataの内容をログに出力
+    //     for (let pair of formData.entries()) {
+    //         console.log(pair[0] + ': ' + pair[1]);
+    //     }
+
+    //     fetch(this.action, {
+    //         method: 'POST',
+    //         body: formData,
+    //         headers: {
+    //             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+    //         }
+    //     })
+    //     .then(response => {
+    //         if (!response.ok) {
+    //             throw new Error('Network response was not ok ' + response.statusText);
+    //         }
+    //         return response.json();
+    //     })
+    //     .then(data => {
+    //         if (data.success) {
+    //             alert('スタンプが作成されました。');
+    //             window.location.reload();
+    //         } else {
+    //             alert('スタンプの作成に失敗しました。 ' + data.message);
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('エラーが発生しました:', error);
+    //         alert('スタンプの作成に失敗しました。 ' + error.message);
+    //     });
+    // });
 });

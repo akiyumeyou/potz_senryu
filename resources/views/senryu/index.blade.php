@@ -11,14 +11,14 @@
         .senryu-text {
             writing-mode: vertical-rl;
             text-orientation: upright;
-            font-size: 28px; 
+            font-size: 28px;
 
             margin-bottom: 1px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             justify-content: flex-start;
-            height: 280px; /* テキスト表示エリアの高さを調整 */
+            height: 240px; /* テキスト表示エリアの高さを調整 */
         }
         .senryu-text p {
             margin: 0;
@@ -78,7 +78,9 @@
                         <span>{{ $senryu->user_name }}</span>
                     @endif
                     <!-- <span class="iine-btn">{{ $senryu->iine }} <i class="fa fa-thumbs-up"></i></span> -->
-                    <span class="iine-btn" data-id="{{ $senryu->id }}">{{ $senryu->iine }} <i class="fa fa-thumbs-up"></i></span>
+                    <span class="iine-btn" data-id="{{ $senryu->id }}">
+                        {{ $senryu->iine > 0 ? '❤️' : '♡' }} {{ $senryu->iine }}
+                    </span>
 
                     <a href="public/img/iine.png"></a>
                 </div>
@@ -89,33 +91,35 @@
         <p>© 2024 川柳アプリ</p>
     </footer>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.iine-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const senryuId = this.getAttribute('data-id');
-    
-                fetch(`/senryus/${senryuId}/iine`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ id: senryuId })
-                })
-                .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-                })
-                .then(data => {
-                    this.innerHTML = `❤️ ${data.iine}`;
-                })
-                .catch(error => console.error('Error:', error));
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.iine-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const senryuId = this.getAttribute('data-id');
 
+                    fetch(`/senryus/${senryuId}/iine`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id: senryuId })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // いいね数に基づいてアイコンを更新
+                        const heartIcon = data.iine > 0 ? '❤️' : '♡';
+                        this.innerHTML = `${heartIcon} ${data.iine}`;
+                    })
+                    .catch(error => console.error('Error:', error));
                 });
+            });
         });
-    });
-</script>    
+    </script>
+
 </body>
 </html>

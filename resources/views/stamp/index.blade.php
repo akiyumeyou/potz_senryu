@@ -1,27 +1,45 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            スタンプ一覧
+        </h2>
+    </x-slot>
 
-@section('content')
-<div class="container">
-    <h1 class="mt-4">スタンプ一覧</h1>
-    @if (session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    <div id="stamp-gallery" class="stamp-gallery mt-4">
-        @foreach ($images as $stamp)
-            <div class="stamp-item mb-4">
-                <img src="{{ asset($stamp->image) }}" alt="Image" class="stamp-image" style="width: 150px; height: 150px;">
-                <div class="stamp-details mt-2">
-                    <p>登録日時: {{ $stamp->created_at }}</p>
-                    <form action="{{ route('stamp.destroy', $stamp->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">削除</button>
-                    </form>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <nav class="mt-4">
+                        <a href="{{ route('dashboard') }}" class="text-blue-500 hover:underline">最初のページへ</a>
+                        <a href="{{ route('senryus.create') }}" class="ml-4 text-blue-500 hover:underline">新規投稿</a>
+                    </nav>
+
+                    @if (session('success'))
+                        <div class="alert alert-success">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                        @foreach ($images as $stamp)
+                            <div class="stamp-item mb-4">
+                                <img src="{{ asset($stamp->image) }}" alt="Image" class="stamp-image w-full h-auto">
+                                <div class="stamp-details mt-2 text-sm">
+                                    <p>記録: {{ $stamp->created_at->format('y/m/d H:i') }}</p>
+                                    <form action="{{ route('stamp.destroy', $stamp->id) }}" method="POST" onsubmit="return confirm('本当に削除しますか？');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger">削除</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
             </div>
-        @endforeach
+        </div>
     </div>
-</div>
-@endsection
+</x-app-layout>
+
+
+
