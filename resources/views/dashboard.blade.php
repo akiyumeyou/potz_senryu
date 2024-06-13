@@ -17,9 +17,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-5 text-2xl text-green-900">
+                <div class="p-5 text-3xl text-green-900">
                     <x-nav-link :href="route('tweets.index')" :active="request()->routeIs('tweet.index')">
-                        {{ __('マイグループチャット') }}
+                        {{ __('My Famiry Tail Chat') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -29,9 +29,9 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-5 text-2xl text-green-900">
+                <div class="p-5 text-3xl text-green-900">
                     <x-nav-link :href="route('chat.index')" :active="request()->routeIs('chat.index')">
-                        {{ __('AIchatテスト') }}
+                        {{ __('AIChat') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -40,10 +40,19 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-5 text-2xl text-green-900">
+                <div class="p-5 text-3xl text-green-900">
                     <x-nav-link :href="route('senryus.index')" :active="request()->routeIs('senryus.index')">
                         {{ __('シルバー川柳') }}
                     </x-nav-link>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="py-6">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900">
+                    {{ __("おすすめ動画 coming soon") }}
                 </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 body {
-    font-size: 20px;
+    font-size: 18px;
     background-color: #FFFAF0; /* 薄いオレンジ色 */
     margin: 0;
     padding-top: 80px;
@@ -23,9 +23,9 @@ body {
 .senryu-input {
     width: 100%; /* 入力枠を大きくする */
     padding: 10px; /* 内側の余白を増やす */
-    margin-bottom: 10px; /* 下側の余白を増やす */
+    margin-bottom: 5px; /* 下側の余白を増やす */
     box-sizing: border-box; /* paddingを含めたサイズでwidthを計算 */
-    font-size: 38px;
+    font-size: 32px;
     writing-mode: vertical-rl;
     text-orientation: upright;
 }

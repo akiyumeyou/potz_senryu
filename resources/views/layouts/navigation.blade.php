@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-orange-300 border-b border-gray-100 text-xl">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
@@ -21,16 +21,9 @@
     <!-- tweet Links -->
     <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
         <x-nav-link :href="route('tweets.index')" :active="request()->routeIs('tweets.index')">
-            {{ __('チャット画面') }}
+            {{ __('チャット') }}
         </x-nav-link>
     </div>
-    <!-- Navigation Links -->
-    <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-        <x-nav-link :href="route('tweets.create')" :active="request()->routeIs('tweets.create')">
-            {{ __('投稿') }}
-        </x-nav-link>
-    </div>
-
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
@@ -49,7 +42,7 @@
 
                     <x-slot name="content">
                         <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                            {{ __('会員情報') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -59,7 +52,7 @@
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('ログアウト') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -95,7 +88,7 @@
 
             <div class="mt-3 space-y-1">
                 <x-responsive-nav-link :href="route('profile.edit')">
-                    {{ __('Profile') }}
+                    {{ __('会員情報') }}
                 </x-responsive-nav-link>
 
                 <!-- Authentication -->
@@ -105,7 +98,7 @@
                     <x-responsive-nav-link :href="route('logout')"
                             onclick="event.preventDefault();
                                         this.closest('form').submit();">
-                        {{ __('Log Out') }}
+                        {{ __('ログアウト') }}
                     </x-responsive-nav-link>
                 </form>
             </div>

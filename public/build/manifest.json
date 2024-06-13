@@ -1,11 +1,11 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-B_EW9siR.css",
+    "file": "assets/app-BCyw4xCY.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/senryu.css": {
-    "file": "assets/senryu-D4xhgMdh.css",
+    "file": "assets/senryu-DFu_YxST.css",
     "src": "resources/css/senryu.css",
     "isEntry": true
   },
@@ -33,7 +33,7 @@
     "isEntry": true
   },
   "resources/js/stamp.js": {
-    "file": "assets/stamp-DfRcZWo5.js",
+    "file": "assets/stamp-DIJ5Hlnv.js",
     "name": "stamp",
     "src": "resources/js/stamp.js",
     "isEntry": true
