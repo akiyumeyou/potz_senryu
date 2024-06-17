@@ -26,41 +26,44 @@ class SenryuController extends Controller
 
     // 新規作成処理
     public function store(Request $request)
-    {
-        $request->validate([
-            'theme' => 'nullable|string|max:128',
-            's_text1' => 'nullable|string|max:10',
-            's_text2' => 'nullable|string|max:10',
-            's_text3' => 'nullable|string|max:10',
-            'img_path' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:20480', // 20MBまでの画像または動画
-        ]);
+{
+    $request->validate([
+        'theme' => 'nullable|string|max:128',
+        's_text1' => 'nullable|string|max:10',
+        's_text2' => 'nullable|string|max:10',
+        's_text3' => 'nullable|string|max:10',
+        'img_path' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,avi|max:20480', // 20MBまでの画像または動画
+    ]);
 
-        try {
-            $data = $request->except('img_path');
-            $data['user_id'] = Auth::id();
-            $data['user_name'] = Auth::user()->name;
-            $data['iine'] = 0; // 新規作成時に iine フィールドを 0 に設定
+    try {
+        $data = $request->except('img_path');
+        $data['user_id'] = Auth::id();
+        $data['user_name'] = Auth::user()->name;
+        $data['iine'] = 0; // 新規作成時に iine フィールドを 0 に設定
 
-            if ($request->hasFile('img_path')) {
-                Log::info('File is present. Processing upload.');
+        if ($request->hasFile('img_path')) {
+            Log::info('File is present. Processing upload.');
+            $filePath = $request->file('img_path')->store('senryu', 'public');
 
-                $filePath = $request->file('img_path')->store('public/senryu');
-                $data['img_path'] = Storage::url($filePath);
-                Log::info('File uploaded to: ' . $filePath);
-            } else {
-                Log::info('No file uploaded.');
-                $data['img_path'] = ''; // img_pathが提供されていない場合のデフォルト値
-            }
+            // 保存されたファイルのフルURLを生成
+            $data['img_path'] = url('/storage/' . $filePath);
 
-            Senryu::create($data);
-            Log::info('Senryu created successfully.');
-
-            return redirect()->route('senryus.index')->with('success', '川柳が作成されました');
-        } catch (\Exception $e) {
-            Log::error('Error creating Senryu: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'エラーが発生しました: ' . $e->getMessage());
+            Log::info('File uploaded to: ' . $data['img_path']);
+        } else {
+            Log::info('No file uploaded.');
+            $data['img_path'] = ''; // img_pathが提供されていない場合のデフォルト値
         }
+
+        Senryu::create($data);
+        Log::info('Senryu created successfully.');
+
+        return redirect()->route('senryus.index')->with('success', '川柳が作成されました');
+    } catch (\Exception $e) {
+        Log::error('Error creating Senryu: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'エラーが発生しました: ' . $e->getMessage());
     }
+}
+
 
 
     // 詳細表示

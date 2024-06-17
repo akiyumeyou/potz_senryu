@@ -10,8 +10,8 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 bg-white border-b border-gray-200">
                     <nav class="mt-4">
-                        <a href="{{ route('dashboard') }}" class="text-blue-500 hover:underline">最初のページへ</a>
-                        <a href="{{ route('senryus.create') }}" class="ml-4 text-blue-500 hover:underline">新規投稿</a>
+                        <a href="{{ route('tweets.index') }}" class="text-blue-500 hover:underline">チャット</a>
+                        <a href="{{ route('stamp.create') }}" class="ml-4 text-blue-500 hover:underline">スタンプ</a>
                     </nav>
 
                     @if (session('success'))
