@@ -8,9 +8,11 @@ use App\Http\Controllers\StampController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\SenryuController;
 use App\Http\Controllers\GoogleLoginController;
+use App\Http\Controllers\OpenAIController;
+
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
@@ -32,6 +34,7 @@ Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogle
     ->name('login.google.callback');
 
 Route::resource('senryus', SenryuController::class);
+
 Route::post('/stamp/store', [StampController::class, 'store'])->name('stamp.store');
 Route::get('/stamps/create', [StampController::class, 'create'])->name('stamp.create');
 Route::get('/stamps', [StampController::class, 'index'])->name('stamp.index');
@@ -54,6 +57,8 @@ Route::get('/chat', function () {
 Route::get('/conversation-history', [ChatController::class, 'getConversationHistory']);
 
 Route::post('/chat', [ChatController::class, 'handle'])->name('chat');
+Route::get('/api/openai-key', [OpenAIController::class, 'getApiKey']);
+
 
 Route::resource('senryus', SenryuController::class);
 Route::post('/senryus/{senryu}/iine', [SenryuController::class, 'updateIine']);

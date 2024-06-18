@@ -95,7 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
         fileNamePreview.textContent = `生成されたファイル名: ${originalFileName}.png`;
     });
 
-    // フォーム送信時にキャンバスの内容を画像として送信
 // フォーム送信時にキャンバスの内容を画像として送信
 document.getElementById('stamp-form').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -131,7 +130,7 @@ document.getElementById('stamp-form').addEventListener('submit', function(e) {
     .then(data => {
         if (data.success) {
             // ここでポップアップアラートを表示せずにリダイレクト
-            window.location.href = '/tweets';
+            window.location.href = '/tweets/index';
         } else {
             alert('スタンプの作成に失敗しました。 ' + data.message);
         }

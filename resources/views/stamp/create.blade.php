@@ -62,8 +62,12 @@
             </div>
         </div>
     </div>
-    <!-- <script type="module" src="{{ asset('build/' . $manifest['resources/js/stamp.js']['file']) }}"></script> -->
-    @vite('resources/js/stamp.js')
+    <!-- サーバーアップロード -->
+    @php
+    $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+    @endphp
+    <script type="module" src="{{ asset('build/' . $manifest['resources/js/stamp.js']['file']) }}"></script>
+    <!-- @vite('resources/js/stamp.js') -->
 </x-app-layout>
 
 

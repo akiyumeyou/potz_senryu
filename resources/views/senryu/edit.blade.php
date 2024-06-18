@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>川柳編集</title>
-    @vite(['resources/css/senryu.css', 'resources/js/senryu.js'])
+    @php
+    $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+    @endphp
+    <link rel="stylesheet" href="{{ asset('build/' . $manifest['resources/css/senryu.css']['file']) }}">
+
+    <!-- Scripts -->
+    <script type="module" src="{{ asset('build/' . $manifest['resources/js/senryu.js']['file']) }}"></script>
+    <!-- @vite(['resources/css/senryu.css', 'resources/js/senryu.js']) -->
 </head>
 <body>
     <header>

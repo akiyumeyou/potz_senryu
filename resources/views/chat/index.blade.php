@@ -1,38 +1,130 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Family Tail Chat') }}
-        </h2>
-    </x-slot>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>AIとリアルタイム音声会話</title>
+    <script>
+        window.apiKey = "{{ env('CHAT_GPT_KEY') }}";
+    </script>
+</head>
+<body>
+    <button id="startButton">AIと会話を開始</button>
+    <div id="output"></div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
-                <h1>マイクボタンで音声入力</h1>
-                <div id="conversation-history" class="bg-gray-100 p-4 mb-4 rounded overflow-x-auto" style="height: 50%; white-space: nowrap;"></div>
-                <form id="chatForm">
-                    @csrf
-                    <label for="content"></label>
-                    <textarea name="content" id="content" class="form-textarea mt-1 block w-full"></textarea>
+<script>
+const startButton = document.getElementById('startButton');
+const output = document.getElementById('output');
 
-                    <button type="button" id="start-record-btn" class="mt-4 inline-block bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">
-                        🎤 音声入力
-                    </button>
-                    <br>
+let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'ja-JP';
+recognition.interimResults = false;
+recognition.continuous = false;
 
-                    <button type="button" id="send-btn" class="mt-4 inline-block bg-green-700 hover:bg-green-900 text-white font-bold py-2 px-4 rounded">
-                        送信
-                    </button> 
-                </form>
-                <div id="transcription-feedback" class="mt-4 text-green-500"></div>
-                <input type="hidden" id="transcribe-route" value="{{ route('transcribe') }}">
-                <input type="hidden" id="chat-route" value="{{ route('chat') }}">
-                <input type="hidden" id="user-name" value="{{ Auth::user()->name }}">
-                <div id="response" class="mt-4"></div>
-                <div id="conversation" class="mt-4"></div>
-            </div>
-        </div>
-    </div>
+let synth = window.speechSynthesis;
+let conversationHistory = [];
+let conversationTimeout;
+let isSpeaking = false;
 
-    @vite('resources/js/chat.js')
-</x-app-layout>
+startButton.addEventListener('click', () => {
+    recognition.start();
+    output.innerHTML += '<p><em>会話を開始しました...</em></p>';
+    startConversationTimeout();
+});
+
+recognition.onresult = async (event) => {
+    const transcript = event.results[event.resultIndex][0].transcript.trim();
+    if (transcript && !isSpeaking) {
+        output.innerHTML += `<p><strong>ユーザー:</strong> ${transcript}</p>`;
+        conversationHistory.push({ role: 'user', content: transcript });
+        recognition.stop();
+        const aiResponse = await getAIResponse();
+        output.innerHTML += `<p><strong>AI:</strong> ${aiResponse}</p>`;
+        conversationHistory.push({ role: 'assistant', content: aiResponse });
+        await speakWithGammaWaveEffect(aiResponse);
+    }
+};
+
+recognition.onerror = (event) => {
+    console.error('Recognition error:', event.error);
+    output.innerHTML += `<p><strong>エラー:</strong> ${event.error}</p>`;
+};
+
+async function getAIResponse() {
+    try {
+        const apiKey = window.apiKey;
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: 'gpt-3.5-turbo',
+                messages: conversationHistory,
+                max_tokens: 100,
+                n: 1,
+                stop: null,
+                temperature: 0.7
+            })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            const aiMessage = data.choices[0].message.content.trim();
+            return aiMessage;
+        } else {
+            console.error('API error:', data);
+            return 'エラーが発生しました。もう一度試してください。';
+        }
+    } catch (error) {
+        console.error('Fetch error:', error);
+        return 'エラーが発生しました。ネットワークを確認してください。';
+    }
+}
+
+async function speakWithGammaWaveEffect(text) {
+    return new Promise((resolve, reject) => {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ja-JP';
+
+        utterance.onstart = () => {
+            isSpeaking = true;
+        };
+
+        utterance.onend = async () => {
+            isSpeaking = false;
+            await applyGammaWaveEffect();
+            recognition.start();
+            resolve();
+        };
+
+        synth.speak(utterance);
+    });
+}
+
+async function applyGammaWaveEffect() {
+    const audioContext = new AudioContext();
+    const oscillator = audioContext.createOscillator();
+    oscillator.type = 'sine';
+    oscillator.frequency.value = 40; // ガンマ波の周波数帯域を設定
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = 0.5;
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    oscillator.start();
+    setTimeout(() => oscillator.stop(), 500); // 0.5秒間ガンマ波を再生
+}
+
+function startConversationTimeout() {
+    clearTimeout(conversationTimeout);
+    conversationTimeout = setTimeout(() => {
+        output.innerHTML += '<p><strong>AI:</strong> 5分が経過しました。一旦会話を終了します。</p>';
+        speak('5分が経過しました。一旦会話を終了します。');
+        recognition.stop();
+    }, 5 * 60 * 1000);
+}
+
+</script>
+</body>
+</html>
