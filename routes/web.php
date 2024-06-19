@@ -33,8 +33,6 @@ Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])
     ->name('login.google.callback');
 
-Route::resource('senryus', SenryuController::class);
-
 Route::post('/stamp/store', [StampController::class, 'store'])->name('stamp.store');
 Route::get('/stamps/create', [StampController::class, 'create'])->name('stamp.create');
 Route::get('/stamps', [StampController::class, 'index'])->name('stamp.index');
@@ -59,6 +57,15 @@ Route::get('/conversation-history', [ChatController::class, 'getConversationHist
 Route::post('/chat', [ChatController::class, 'handle'])->name('chat');
 Route::get('/api/openai-key', [OpenAIController::class, 'getApiKey']);
 
-
 Route::resource('senryus', SenryuController::class);
-Route::post('/senryus/{senryu}/iine', [SenryuController::class, 'updateIine']);
+// Route::post('/senryus/{senryu}/iine', [SenryuController::class, 'updateIine']);
+// routes/web.php
+
+Route::post('/senryus/{id}/iine', [SenryuController::class, 'incrementIine']);
+
+use App\Http\Controllers\YouTubeController;
+
+Route::get('/', [YouTubeController::class, 'index'])->name('youtube.index');
+Route::post('/store', [YouTubeController::class, 'store'])->name('youtube.store');
+Route::post('/update-likes/{id}', [YouTubeController::class, 'updateLikes'])->name('youtube.updateLikes');
+Route::delete('/destroy/{id}', [YouTubeController::class, 'destroy'])->name('youtube.destroy');

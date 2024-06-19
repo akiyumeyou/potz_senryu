@@ -75,10 +75,11 @@ class StampController extends Controller
             $stamp->image = $filePath;
             $stamp->save();
 
+            // return response()->json(['success' => true, 'redirect_url' => route('tweets.index')]);
+            // return redirect()->route('tweets.index')->with('success', 'Stamp created successfully');
             return response()->json(['success' => true, 'message' => 'スタンプが作成されました。']);
         } catch (\Exception $e) {
             Log::error('エラーが発生しました: ' . $e->getMessage());
-            // エラーメッセージをJSON形式で返す
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }

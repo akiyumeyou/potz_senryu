@@ -90,38 +90,41 @@
     <footer class="mt-10">
         <p>© 2024 川柳アプリ</p>
     </footer>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll('.iine-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const senryuId = this.getAttribute('data-id');
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.iine-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const senryuId = this.getAttribute('data-id');
 
-                    fetch(`/senryus/${senryuId}/iine`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ id: senryuId })
-                    })
-
-
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // いいね数に基づいてアイコンを更新
-                        const heartIcon = data.iine > 0 ? '❤️' : '♡';
-                        this.innerHTML = `${heartIcon} ${data.iine}`;
-                    })
-                    .catch(error => console.error('Error:', error));
-                });
-            });
+            fetch(`/senryus/${senryuId}/iine`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data && typeof data.iine !== 'undefined') {
+                    // いいね数に基づいてアイコンを更新
+                    const heartIcon = data.iine > 0 ? '❤️' : '♡';
+                    this.innerHTML = `${heartIcon} ${data.iine}`;
+                } else {
+                    console.error('Error: Invalid data format');
+                }
+            })
+            .catch(error => console.error('Error:', error));
         });
-    </script>
+    });
+});
+</script>
+
 
 </body>
 </html>

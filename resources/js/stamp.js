@@ -127,10 +127,18 @@ document.getElementById('stamp-form').addEventListener('submit', function(e) {
         }
         return response.json();
     })
+//    .then(data => {
+//         if (data.success) {
+//             window.location.href = data.redirect_url;
+//         } else {
+//             console.error(data.message);
+//             alert(data.message);
+//         }
+//     })
     .then(data => {
         if (data.success) {
-            // ここでポップアップアラートを表示せずにリダイレクト
-            window.location.href = '/tweets/index';
+            alert('スタンプが作成されました。');
+            window.location.reload();
         } else {
             alert('スタンプの作成に失敗しました。 ' + data.message);
         }

@@ -126,10 +126,23 @@ class SenryuController extends Controller
             return redirect()->back()->with('error', 'エラーが発生しました: ' . $e->getMessage());
         }
     }
-    public function updateIine(Request $request, Senryu $senryu)
-    {
-    $senryu->increment('iine');
+    // public function updateIine(Request $request, Senryu $senryu)
+    // {
+    // $senryu->increment('iine');
+    // return response()->json(['iine' => $senryu->iine]);
+    // }
+// app/Http/Controllers/SenryuController.php
+
+// app/Http/Controllers/SenryuController.php
+
+public function incrementIine($id)
+{
+    $senryu = Senryu::findOrFail($id);
+    $senryu->iine += 1;
+    $senryu->save();
+
     return response()->json(['iine' => $senryu->iine]);
-    }
+}
+
 
 }
