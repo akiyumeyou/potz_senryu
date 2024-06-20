@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\YouTube;
@@ -21,18 +20,7 @@ class YouTubeController extends Controller
             'category' => 'required|string',
         ]);
 
-        $videoID = extractVideoID($request->youtube_link);
-
-        if (!$videoID) {
-            return back()->withErrors(['youtube_link' => 'Invalid YouTube URL']);
-        }
-
-        YouTube::create([
-            'youtube_link' => $request->youtube_link,
-            'video_id' => $videoID,
-            'comment' => $request->comment,
-            'category' => $request->category,
-        ]);
+        YouTube::create($request->all());
 
         return redirect()->route('youtube.index');
     }

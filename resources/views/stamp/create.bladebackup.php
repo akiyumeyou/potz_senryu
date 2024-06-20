@@ -7,9 +7,6 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <nav class="mt-4">
-                <a href="{{ route('tweets.index') }}" class="text-blue-500 hover:underline">チャットに戻る</a>
-            </nav>
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                 @if (session('success'))
                     <div class="bg-green-500 text-white p-4 mb-4">

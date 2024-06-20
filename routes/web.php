@@ -57,15 +57,15 @@ Route::get('/conversation-history', [ChatController::class, 'getConversationHist
 Route::post('/chat', [ChatController::class, 'handle'])->name('chat');
 Route::get('/api/openai-key', [OpenAIController::class, 'getApiKey']);
 
-Route::resource('senryus', SenryuController::class);
-// Route::post('/senryus/{senryu}/iine', [SenryuController::class, 'updateIine']);
-// routes/web.php
 
-Route::post('/senryus/{id}/iine', [SenryuController::class, 'incrementIine']);
+Route::resource('senryus', SenryuController::class);
+Route::post('/senryus/{id}/iine', [SenryuController::class, 'incrementIine'])->name('senryu.incrementIine');
+Route::get('/senryu', [SenryuController::class, 'index'])->name('senryu.index');
+
 
 use App\Http\Controllers\YouTubeController;
 
-Route::get('/', [YouTubeController::class, 'index'])->name('youtube.index');
+Route::get('/youtube', [YouTubeController::class, 'index'])->name('youtube.index');
 Route::post('/store', [YouTubeController::class, 'store'])->name('youtube.store');
 Route::post('/update-likes/{id}', [YouTubeController::class, 'updateLikes'])->name('youtube.updateLikes');
 Route::delete('/destroy/{id}', [YouTubeController::class, 'destroy'])->name('youtube.destroy');

@@ -77,12 +77,14 @@
                     @else
                         <span>{{ $senryu->user_name }}</span>
                     @endif
-                    <!-- <span class="iine-btn">{{ $senryu->iine }} <i class="fa fa-thumbs-up"></i></span> -->
-                    <span class="iine-btn" data-id="{{ $senryu->id }}">
-                        {{ $senryu->iine > 0 ? '❤️' : '♡' }} {{ $senryu->iine }}
-                    </span>
 
-                    <a href="public/img/iine.png"></a>
+                    <!-- <span class="iine-btn" data-id="{{ $senryu->id }}">
+                        {{ $senryu->iine > 0 ? '❤️' : '♡' }} {{ $senryu->iine }}
+                    </span> -->
+                    <form action="{{ route('senryu.incrementIine', ['id' => $senryu->id]) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="iine-btn bg-white-500 text-green-900 p-2 rounded">❤️ {{ $senryu->iine }}</button>
+                    </form>
                 </div>
             </div>
         @endforeach

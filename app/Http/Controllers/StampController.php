@@ -75,15 +75,17 @@ class StampController extends Controller
             $stamp->image = $filePath;
             $stamp->save();
 
-            // return response()->json(['success' => true, 'redirect_url' => route('tweets.index')]);
-            // return redirect()->route('tweets.index')->with('success', 'Stamp created successfully');
-            return response()->json(['success' => true, 'message' => 'スタンプが作成されました。']);
+            // JSON形式で成功メッセージとリダイレクトURLを返す
+            return response()->json([
+                'success' => true,
+                'message' => 'Stamp created successfully',
+                'redirect_url' => route('tweets.index')
+            ]);
         } catch (\Exception $e) {
             Log::error('エラーが発生しました: ' . $e->getMessage());
             return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
     }
-
 
     public function show(Stamp $stamp)
     {
@@ -108,3 +110,4 @@ class StampController extends Controller
         return redirect()->route('stamp.index')->with('success', 'スタンプが削除されました。');
     }
 }
+

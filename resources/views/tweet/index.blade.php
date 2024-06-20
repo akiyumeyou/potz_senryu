@@ -5,17 +5,44 @@
         </h2>
     </x-slot>
     <style>
+        .stamp-gallery-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            background-color: #f0f0f0; /* スタンプ表示エリアの背景色 */
+            padding: 10px;
+        }
         .stamp-gallery {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: flex-start;
+            overflow-x: auto;
+            scroll-behavior: smooth;
         }
         .stamp-image {
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
+            flex: 0 0 auto;
+            width: 16.66%; /* 100% / 6 = 16.66% */
             cursor: pointer;
+        }
+        .arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .left-arrow {
+            left: 0;
+        }
+        .right-arrow {
+            right: 0;
+        }
+        @media (min-width: 768px) {
+            .stamp-image {
+                width: 8.33%; /* 100% / 12 = 8.33% for larger screens */
+            }
         }
         .chat-message {
             margin-bottom: 10px;
@@ -37,24 +64,41 @@
             overflow: hidden;
         }
         #message-list {
-        height: 50vh; /* 画面の高さの50%に設定 */
-        overflow-y: scroll; /* 常にスクロールバーを表示 */
-        padding: 10px;
-        flex-grow: 1;
+            height: 98%; /* 画面の高さの60%に設定 */
+            overflow-y: scroll; /* 常にスクロールバーを表示 */
+            padding: 2px;
+            flex-grow: 1;
+            background-color: #f9f5e7; /* メッセージ表示エリアの背景色 */
         }
-
         .input-area {
             padding: 10px;
             background: #f0f0f0;
+        }
+        .control-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .control-buttons a {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: #1c3faa;
+            color: white;
+            border-radius: 5px;
+            margin: 5px;
+            font-size: 18px;
+            font-weight: bold;
         }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
             <div class="chat-container">
-                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6" style="height: 60%; background-color: #f9f5e7;">
                     <ul id="message-list" class="space-y-4">
                         @foreach ($messages as $tweet)
-                            <li class="p-2 border rounded-lg chat-message {{ Auth::id() == $tweet->user_id ? 'user' : 'other' }}">    <strong>{{ $tweet->user_name }}:</strong>
+                            <li class="p-2 border rounded-lg chat-message {{ Auth::id() == $tweet->user_id ? 'user' : 'other' }}">
+                                <strong>{{ $tweet->user_name }}:</strong>
                                 <div>
                                     @if ($tweet->message_type == 'image')
                                         <img src="{{ asset($tweet->content) }}" alt="Image" class="max-w-full h-auto">
@@ -82,8 +126,7 @@
                     </ul>
                 </div>
 
-
-                <form id="tweet-form" method="POST" action="{{ route('tweets.store') }}" enctype="multipart/form-data">
+                <form id="tweet-form" method="POST" action="{{ route('tweets.store') }}" enctype="multipart/form-data" class="input-area">
                     @csrf
                     <div class="flex items-center space-x-2">
                         <img src="{{ asset('img/maiku.png') }}" alt="Mic" class="w-12 h-12"><br>
@@ -99,16 +142,21 @@
                     </div>
                 </form>
 
-                <div id="stamp-gallery" class="stamp-gallery mt-4">
-                    @foreach ($images as $image)
-                        <img src="{{ asset($image->image) }}" alt="Image" class="stamp-image" onclick="selectStamp('{{ asset($image->image) }}')">
-                    @endforeach
+                <div class="stamp-gallery-container">
+                    <button class="arrow left-arrow" onclick="scrollStampGalleryLeft()">&#60;</button>
+                    <div id="stamp-gallery" class="stamp-gallery mt-4">
+                        @foreach ($images as $image)
+                            <img src="{{ asset($image->image) }}" alt="Image" class="stamp-image" onclick="selectStamp('{{ asset($image->image) }}')">
+                        @endforeach
+                    </div>
+                    <button class="arrow right-arrow" onclick="scrollStampGalleryRight()">&#62;</button>
                 </div>
-                <div class="flex mt-4 space-x-2">
-                    <a href="{{ route('stamp.create') }}" class="flex-1 text-center py-2 bg-blue-900 text-white rounded-lg shadow-lg">
+
+                <div class="control-buttons">
+                    <a href="{{ route('stamp.create') }}">
                         スタンプ作成
                     </a>
-                    <a href="{{ route('stamp.index') }}" class="flex-1 text-center py-2 bg-blue-900 text-white rounded-lg shadow-lg">
+                    <a href="{{ route('stamp.index') }}">
                         スタンプ一覧
                     </a>
                 </div>
@@ -116,30 +164,43 @@
         </div>
     </div>
 
-
     <script>
-            function selectStamp(imageUrl) {
+        function selectStamp(imageUrl) {
             document.getElementById('content').value = imageUrl;
             document.getElementById('message_type').value = 'stamp';
             document.getElementById('stamp').value = imageUrl;
             document.getElementById('tweet-form').submit();
             playSound(); // 音を鳴らす
-            }
+        }
 
-            function playSound() {
-                var audio = new Audio('/sound/syupon01.mp3');
-                audio.play().then(() => {
-                    console.log("Audio played successfully!");
-                }).catch(error => {
-                    console.error("Error playing the audio:", error);
-                });
-            }
-            document.addEventListener('DOMContentLoaded', function () {
+        function playSound() {
+            var audio = new Audio('/sound/syupon01.mp3');
+            audio.play().then(() => {
+                console.log("Audio played successfully!");
+            }).catch(error => {
+                console.error("Error playing the audio:", error);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
             var messageList = document.getElementById('message-list');
             messageList.scrollTop = messageList.scrollHeight;
+        });
+
+        function scrollStampGalleryLeft() {
+            document.getElementById('stamp-gallery').scrollBy({
+                left: -300,
+                behavior: 'smooth'
             });
+        }
 
-
-        </script>
+        function scrollStampGalleryRight() {
+            document.getElementById('stamp-gallery').scrollBy({
+                left: 300,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 
 </x-app-layout>
+
