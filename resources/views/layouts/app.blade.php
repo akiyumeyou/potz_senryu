@@ -29,7 +29,7 @@
 </head>
 
 <body class="font-sans antialiased">
-    <div class="min-h-screen bg-orange-300">
+    <div class="min-h-screen bg-orange-200">
         @include('layouts.navigation')
 
         <!-- Page Heading -->

@@ -1,3 +1,4 @@
+<x-app-layout>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -50,9 +51,7 @@
 </head>
 <body class="bg-yellow-50 flex flex-col items-center justify-center min-h-screen py-20">
     <header class="mb-10">
-        <h1 class="text-3xl font-bold">シルバー川柳一覧</h1>
         <nav class="mt-4">
-            <a href="{{ route('dashboard') }}" class="text-blue-500 hover:underline">最初のページへ</a>
             <a href="{{ route('senryus.create') }}" class="ml-4 text-blue-500 hover:underline">新規投稿</a>
         </nav>
     </header>
@@ -130,3 +129,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+</x-app-layout>

@@ -1,9 +1,4 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Famiry Tail Chat') }}
-        </h2>
-    </x-slot>
     <style>
         .stamp-gallery-container {
             position: relative;

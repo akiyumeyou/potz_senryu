@@ -1,9 +1,9 @@
+<x-app-layout>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>シニア動画交流</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
@@ -11,27 +11,22 @@
             text-decoration: underline;
             cursor: pointer;
         }
-
         #displayName {
             margin-left: auto;
             padding: 10px;
         }
-
         #aside {
             width: 22%;
         }
-
         #content {
             flex-grow: 1;
             padding: 20px;
             box-sizing: border-box;
         }
-
         #flex {
             display: flex;
             flex-direction: column;
         }
-
         #output {
             width: 78%;
             display: flex;
@@ -39,9 +34,6 @@
             justify-content: space-between;
             gap: 20px;
         }
-
- 
-
         button#send {
             background-color: green;
             color: white;
@@ -50,13 +42,11 @@
             border-radius: 5px;
             cursor: pointer;
         }
-
         div#output p {
             background-color: white;
             padding: 10px;
             margin-bottom: 10px;
         }
-
         .video-container {
             max-width: 600px;
             margin: 20px auto;
@@ -65,25 +55,37 @@
             border-radius: 5px;
         }
     </style>
+    <script>
+        function extractVideoID(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframes = document.querySelectorAll('iframe[data-youtube]');
+            iframes.forEach(iframe => {
+                const videoID = extractVideoID(iframe.dataset.youtube);
+                if (videoID) {
+                    iframe.src = `https://www.youtube.com/embed/${videoID}`;
+                }
+            });
+        });
+    </script>
 </head>
 <body class="bg-orange-100">
 
-<header class="bg-green-200 text-green-800 p-4 flex items-center">
-    <button id="sortBtnDate" class="bg-green-500 text-white p-2 m-2">新着順</button>
-    <button id="sortBtnLikes" class="bg-green-500 text-white p-2 m-2">いいね</button>
-    <h1 class="text-2xl m-0">POTZ動画交流のページ</h1>
-    <nav class="mt-4">
-        <a href="{{ route('dashboard') }}" class="text-blue-500 hover:underline">最初のページへ</a>
-    </nav>
+<header class="text-green-800 p-4 flex items-center">
+    <button id="sortBtnDate" class="bg-green-800 text-white p-2 m-2">新着順</button>
+    <button id="sortBtnLikes" class="bg-green-800 text-white p-2 m-2">いいね</button>
     <a href="#aside" class="ml-auto text-green-800 underline">投稿</a>
-    <div id="displayName" class="ml-auto p-2">ユーザー名</div>
 </header>
 
 <main class="flex flex-wrap justify-center p-4">
     <div id="output" class="w-full flex flex-wrap justify-between gap-4">
         @foreach ($videos as $video)
         <div class="video-container bg-white shadow rounded p-4 w-full max-w-lg" id="message-{{ $video->id }}">
-            <iframe src="https://www.youtube.com/embed/{{ extractVideoID($video->youtube_link) }}" frameborder="0" allowfullscreen class="w-full h-48"></iframe>
+            <iframe data-youtube="{{ $video->youtube_link }}" frameborder="0" allowfullscreen class="w-full h-48"></iframe>
             <div class="video-info p-2">
                 <p>{{ $video->comment }}</p>
                 <div class="btn-group flex justify-between mt-2">
@@ -123,13 +125,6 @@
     <a href="https://potz.jp/" class="text-white underline">https://potz.jp/</a>
 </footer>
 
-<script>
-function extractVideoID(url) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : null;
-}
-</script>
-
 </body>
 </html>
+</x-app-layout>
