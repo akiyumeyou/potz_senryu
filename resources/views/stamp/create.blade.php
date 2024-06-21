@@ -64,6 +64,11 @@
                 </form>
             </div>
         </div>
+        <footer id="footer" class="w-full bg-green-800 text-white text-center p-2 fixed bottom-0">
+            <img src="{{ asset('img/logo.png') }}" alt="potz" class="inline-block w-8 h-8">
+            <a href="https://potz.jp/" class="text-white underline">https://potz.jp/</a>
+        </footer>
+
     </div>
     <!-- サーバーアップロード -->
     @php

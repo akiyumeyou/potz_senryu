@@ -1,3 +1,4 @@
+<x-app-layout>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -15,16 +16,6 @@
     <!-- @vite(['resources/css/senryu.css', 'resources/js/senryu.js']) -->
 </head>
 <body>
-    <header>
-        <nav>
-            <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('最初のページ') }}
-            </x-nav-link>
-            <x-nav-link :href="route('senryus.index')" :active="request()->routeIs('senryus.index')">
-                {{ __('シルバー川柳') }}
-            </x-nav-link>
-        </nav>
-    </header>
 
     <div>
         @if (session('success'))
@@ -62,8 +53,10 @@
         </form>
     </div>
 
-    <footer>
-        <p>© 2024 川柳アプリ</p>
+    <footer id="footer" class="w-full bg-green-800 text-white text-center p-2 fixed bottom-0">
+        <img src="{{ asset('img/logo.png') }}" alt="potz" class="inline-block w-8 h-8">
+        <a href="https://potz.jp/" class="text-white underline">https://potz.jp/</a>
     </footer>
-</body>
+    </body>
 </html>
+</x-app-layout>

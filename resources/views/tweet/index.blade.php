@@ -16,6 +16,7 @@
             flex: 0 0 auto;
             width: 16.66%; /* 100% / 6 = 16.66% */
             cursor: pointer;
+            border-radius: 10px;
         }
         .arrow {
             position: absolute;
@@ -39,18 +40,41 @@
                 width: 8.33%; /* 100% / 12 = 8.33% for larger screens */
             }
         }
-        .chat-message {
+        .chat-message-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             margin-bottom: 10px;
+            max-width: 90%; /* 横サイズ画面の90% */
+            word-break: break-word;
+        }
+        .chat-message-container.user {
+            align-items: flex-end;
+            margin-left: auto;
+        }
+        .chat-message {
             padding: 10px;
-            border-radius: 5px;
+            border-radius: 10px;
+            position: relative;
+            font-size: 20px;
+            margin: 1px;
         }
         .chat-message.user {
-            text-align: right;
             background-color: #cff1bf;
+            text-align: right;
         }
         .chat-message.other {
+            background-color: #ffffff;
             text-align: left;
-            background-color: #f9f5e7;
+        }
+        .chat-username {
+            font-size: 0.8em;
+            margin-bottom: 2px;
+        }
+        .chat-timestamp {
+            font-size: 0.8em;
+            margin-top: 5px;
+            text-align: right;
         }
         .chat-container {
             display: flex;
@@ -59,7 +83,7 @@
             overflow: hidden;
         }
         #message-list {
-            height: 98%; /* 画面の高さの60%に設定 */
+            height: 98%; /* 画面の高さの98%に設定 */
             overflow-y: scroll; /* 常にスクロールバーを表示 */
             padding: 2px;
             flex-grow: 1;
@@ -85,6 +109,16 @@
             font-size: 18px;
             font-weight: bold;
         }
+        .edit-icon {
+            display: inline-block;
+            margin-left: 10px;
+        }
+        @media (max-width: 768px) {
+            .chat-message {
+                font-size: 20px;
+                padding: 1px;
+            }
+        }
     </style>
     <div class="py-12">
         <div class="max-w-7xl mx-auto px-6 lg:px-8">
@@ -92,27 +126,32 @@
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6" style="height: 60%; background-color: #f9f5e7;">
                     <ul id="message-list" class="space-y-4">
                         @foreach ($messages as $tweet)
-                            <li class="p-2 border rounded-lg chat-message {{ Auth::id() == $tweet->user_id ? 'user' : 'other' }}">
-                                <strong>{{ $tweet->user_name }}:</strong>
-                                <div>
-                                    @if ($tweet->message_type == 'image')
-                                        <img src="{{ asset($tweet->content) }}" alt="Image" class="max-w-full h-auto">
-                                    @elseif ($tweet->message_type == 'video')
-                                        <video controls class="max-w-full h-auto">
-                                            <source src="{{ asset($tweet->content) }}" type="video/mp4">
-                                        </video>
-                                    @elseif ($tweet->message_type == 'link')
-                                        <a href="{{ $tweet->content }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ $tweet->content }}</a>
-                                    @elseif ($tweet->message_type == 'stamp')
-                                        <img src="{{ asset($tweet->content) }}" alt="Stamp" class="max-w-full h-auto">
-                                    @else
-                                        <p>{{ $tweet->content }}</p>
-                                    @endif
+                            <li class="chat-message-container {{ Auth::id() == $tweet->user_id ? 'user' : 'other' }}">
+                                @if (Auth::id() != $tweet->user_id)
+                                    <span class="chat-username">{{ $tweet->user_name }}</span>
+                                @endif
+                                <div class="p-2 border rounded-lg chat-message {{ Auth::id() == $tweet->user_id ? 'user' : 'other' }}">
+                                    <div>
+                                        @if ($tweet->message_type == 'image')
+                                            <img src="{{ asset($tweet->content) }}" alt="Image" class="max-w-full h-auto rounded-lg">
+                                        @elseif ($tweet->message_type == 'video')
+                                            <video controls class="max-w-full h-auto rounded-lg">
+                                                <source src="{{ asset($tweet->content) }}" type="video/mp4">
+                                            </video>
+                                        @elseif ($tweet->message_type == 'link')
+                                            <a href="{{ $tweet->content }}" target="_blank" class="text-blue-500 hover:text-blue-700">{{ $tweet->content }}</a>
+                                        @elseif ($tweet->message_type == 'stamp')
+                                            <img src="{{ asset($tweet->content) }}" alt="Stamp" class="max-w-full h-auto rounded-lg">
+                                        @else
+                                            <p>{{ $tweet->content }}</p>
+                                        @endif
+                                    </div>
                                 </div>
-                                <div class="mt-2">
+                                <div class="chat-timestamp">
+                                    {{ $tweet->created_at->format('Y/m/d H:i') }}
                                     @if(Auth::check() && Auth::id() == $tweet->user_id)
-                                        <a href="{{ route('tweets.edit', $tweet->id) }}" class="bg-yellow-500 hover:bg-yellow-700 text-black font-bold py-2 px-4 rounded">
-                                            編集
+                                        <a href="{{ route('tweets.edit', $tweet->id) }}" class="edit-icon">
+                                            <img src="{{ asset('img/hensyu.png') }}" alt="Edit" class="w-5 h-5">
                                         </a>
                                     @endif
                                 </div>
@@ -198,4 +237,3 @@
     </script>
 
 </x-app-layout>
-
