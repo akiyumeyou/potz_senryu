@@ -1,11 +1,4 @@
 <x-app-layout>
-    <!DOCTYPE html>
-    <html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>シニア動画交流</title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
         <style>
             .sort-text {
                 text-decoration: underline;
@@ -78,73 +71,17 @@
                 padding-bottom: 70px; /* フッターの高さを考慮してボディの下部の位置を調整 */
             }
         </style>
-        <script>
-            function extractVideoID(url) {
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = url.match(regExp);
-                return (match && match[2].length === 11) ? match[2] : null;
-            }
-
-            function sortAndFilterVideos() {
-                const sortOption = document.getElementById('sortOptions').value;
-                const videos = Array.from(document.querySelectorAll('.video-container'));
-
-                let sortedVideos = videos;
-
-                if (sortOption === 'newest') {
-                    sortedVideos = videos.sort((a, b) => {
-                        return new Date(b.dataset.date) - new Date(a.dataset.date);
-                    });
-                } else if (sortOption === 'likes') {
-                    sortedVideos = videos.sort((a, b) => {
-                        return parseInt(b.dataset.likes) - parseInt(a.dataset.likes);
-                    });
-                } else {
-                    sortedVideos = videos.filter(video => video.dataset.category === sortOption);
-                }
-
-                const output = document.getElementById('output');
-                output.innerHTML = '';
-                sortedVideos.forEach(video => {
-                    output.appendChild(video);
-                });
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const iframes = document.querySelectorAll('iframe[data-youtube]');
-                iframes.forEach(iframe => {
-                    const videoID = extractVideoID(iframe.dataset.youtube);
-                    if (videoID) {
-                        iframe.src = `https://www.youtube.com/embed/${videoID}`;
-                    }
-                });
-
-                const sortOptions = document.getElementById('sortOptions');
-                sortOptions.addEventListener('change', sortAndFilterVideos);
-
-                // プルダウンフォームのトグル
-                const postButton = document.getElementById('postButton');
-                const postForm = document.getElementById('postForm');
-                postButton.addEventListener('click', function() {
-                    postForm.classList.toggle('hidden');
-                });
-
-                // 初期ソートとフィルタリング
-                sortAndFilterVideos();
-            });
-        </script>
-    </head>
     <body class="bg-orange-100">
 
     <header class="text-green-800 p-4 flex items-center">
-        <select id="sortOptions" class="bg-green-800 text-white p-2 m-2">
+        <select id="sortOptions" class="bg-green-800 text-white p-2 m-2 rounded">
             <option value="newest">新着順</option>
             <option value="likes">いいね順</option>
             <option value="senior">シニア会員用</option>
             <option value="support">サポート会員用</option>
             <option value="series">シリーズ</option>
         </select>
-        <button id="postButton" class="bg-green-800 text-white p-2 m-2 ml-auto">投稿</button>
+        <button id="postButton" class="bg-green-800 text-white p-2 m-2 ml-auto rounded">投稿</button>
     </header>
 
     <main class="flex flex-wrap justify-center p-4">
@@ -190,8 +127,62 @@
         <img src="{{ asset('img/logo.png') }}" alt="potz" class="inline-block w-8 h-8">
         <a href="https://potz.jp/" class="text-white underline">https://potz.jp/</a>
     </footer>
+    <script>
+        function extractVideoID(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
 
+        function sortAndFilterVideos() {
+            const sortOption = document.getElementById('sortOptions').value;
+            const videos = Array.from(document.querySelectorAll('.video-container'));
+
+            let sortedVideos = videos;
+
+            if (sortOption === 'newest') {
+                sortedVideos = videos.sort((a, b) => {
+                    return new Date(b.dataset.date) - new Date(a.dataset.date);
+                });
+            } else if (sortOption === 'likes') {
+                sortedVideos = videos.sort((a, b) => {
+                    return parseInt(b.dataset.likes) - parseInt(a.dataset.likes);
+                });
+            } else {
+                sortedVideos = videos.filter(video => video.dataset.category === sortOption);
+            }
+
+            const output = document.getElementById('output');
+            output.innerHTML = '';
+            sortedVideos.forEach(video => {
+                output.appendChild(video);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const iframes = document.querySelectorAll('iframe[data-youtube]');
+            iframes.forEach(iframe => {
+                const videoID = extractVideoID(iframe.dataset.youtube);
+                if (videoID) {
+                    iframe.src = `https://www.youtube.com/embed/${videoID}`;
+                }
+            });
+
+            const sortOptions = document.getElementById('sortOptions');
+            sortOptions.addEventListener('change', sortAndFilterVideos);
+
+            // プルダウンフォームのトグル
+            const postButton = document.getElementById('postButton');
+            const postForm = document.getElementById('postForm');
+            postButton.addEventListener('click', function() {
+                postForm.classList.toggle('hidden');
+            });
+
+            // 初期ソートとフィルタリング
+            sortAndFilterVideos();
+        });
+    </script>
     </body>
     </html>
-    </x-app-layout>
+</x-app-layout>
 

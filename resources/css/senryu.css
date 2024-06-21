@@ -17,7 +17,7 @@ body {
     text-align: center;
     writing-mode: vertical-rl; /* 縦書き */
     text-orientation: upright;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .senryu-input {

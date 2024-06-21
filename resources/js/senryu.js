@@ -7,13 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
     let toukouBtn = document.getElementById('toukou-btn');
     let currentFileSelected = false; // 画像が選択されているかを示すフラグ
 
-    // Prevent default drag behaviors
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         dropArea.addEventListener(eventName, preventDefaults, false);
         document.body.addEventListener(eventName, preventDefaults, false);
     });
 
-    // Handle dropped files
     dropArea.addEventListener('drop', handleDrop, false);
     fileElem.addEventListener('change', handleFiles, false);
 
@@ -23,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
         currentFileSelected = false;
         dropArea.style.display = 'block';
         reselectBtn.style.display = 'none';
-        toukouBtn.style.display = 'none';
     });
 
     function preventDefaults(e) {
@@ -104,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         dropArea.style.display = 'none';
                         reselectBtn.style.display = 'block';
-                        toukouBtn.style.display = 'block';
                     }, 'image/jpeg', 0.75);
                 };
             };
@@ -117,7 +113,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             dropArea.style.display = 'none';
             reselectBtn.style.display = 'block';
-            toukouBtn.style.display = 'block';
         }
     }
 
@@ -129,14 +124,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.querySelector('form').addEventListener('submit', function(e) {
-        if (document.querySelector('form').getAttribute('data-type') === 'edit' && !currentFileSelected) {
-            return; // 画像が再選択されていない場合はそのまま送信
-        }
-
-        const files = fileElem.files;
-        if (files.length === 0) {
-            e.preventDefault();
-            alert('ファイルが選択されていません。');
+        if (!currentFileSelected) {
+            fileElem.value = '';
+            const defaultFilePath = 'public/img/dfo.jpg';
+            e.target.appendChild(new FormData().append('img_path', defaultFilePath));
         }
     });
 });

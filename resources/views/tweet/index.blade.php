@@ -53,7 +53,7 @@
             margin-left: auto;
         }
         .chat-message {
-            padding: 10px;
+            padding: 3px;
             border-radius: 10px;
             position: relative;
             font-size: 20px;
@@ -121,7 +121,7 @@
         }
     </style>
     <div class="py-12">
-        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <!-- <div class="max-w-7xl mx-auto px-6 lg:px-8"> -->
             <div class="chat-container">
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6" style="height: 60%; background-color: #f9f5e7;">
                     <ul id="message-list" class="space-y-4">
@@ -195,7 +195,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        <!-- </div> -->
     </div>
 
     <script>

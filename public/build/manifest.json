@@ -1,11 +1,11 @@
 {
   "resources/css/app.css": {
-    "file": "assets/app-DlcHzjdm.css",
+    "file": "assets/app-pL1FPFCN.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/senryu.css": {
-    "file": "assets/senryu-DFu_YxST.css",
+    "file": "assets/senryu-Dr8T7vHY.css",
     "src": "resources/css/senryu.css",
     "isEntry": true
   },
@@ -27,7 +27,7 @@
     "isEntry": true
   },
   "resources/js/senryu.js": {
-    "file": "assets/senryu-CIrODjdd.js",
+    "file": "assets/senryu-DLiQCE9t.js",
     "name": "senryu",
     "src": "resources/js/senryu.js",
     "isEntry": true

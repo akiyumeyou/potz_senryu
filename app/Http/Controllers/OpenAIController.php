@@ -1,6 +1,8 @@
 <?php
-namespace App\Http\Controllers;
+
 // app/Http/Controllers/OpenAIController.php
+
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 

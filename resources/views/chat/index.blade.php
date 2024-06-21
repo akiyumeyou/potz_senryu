@@ -2,129 +2,75 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>AIとリアルタイム音声会話</title>
-    <script>
-        window.apiKey = "{{ env('CHAT_GPT_KEY') }}";
-    </script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Gおしゃべり</title>
 </head>
 <body>
-    <button id="startButton">AIと会話を開始</button>
+    <button id="startButton">Talk to AI</button>
     <div id="output"></div>
+    <script>
+        const startButton = document.getElementById('startButton');
+        const output = document.getElementById('output');
 
-<script>
-const startButton = document.getElementById('startButton');
-const output = document.getElementById('output');
+        let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'ja-JP';
+        recognition.interimResults = false;
+        recognition.continuous = true;
 
-let recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.lang = 'ja-JP';
-recognition.interimResults = false;
-recognition.continuous = false;
+        let synth = window.speechSynthesis;
 
-let synth = window.speechSynthesis;
-let conversationHistory = [];
-let conversationTimeout;
-let isSpeaking = false;
-
-startButton.addEventListener('click', () => {
-    recognition.start();
-    output.innerHTML += '<p><em>会話を開始しました...</em></p>';
-    startConversationTimeout();
-});
-
-recognition.onresult = async (event) => {
-    const transcript = event.results[event.resultIndex][0].transcript.trim();
-    if (transcript && !isSpeaking) {
-        output.innerHTML += `<p><strong>ユーザー:</strong> ${transcript}</p>`;
-        conversationHistory.push({ role: 'user', content: transcript });
-        recognition.stop();
-        const aiResponse = await getAIResponse();
-        output.innerHTML += `<p><strong>AI:</strong> ${aiResponse}</p>`;
-        conversationHistory.push({ role: 'assistant', content: aiResponse });
-        await speakWithGammaWaveEffect(aiResponse);
-    }
-};
-
-recognition.onerror = (event) => {
-    console.error('Recognition error:', event.error);
-    output.innerHTML += `<p><strong>エラー:</strong> ${event.error}</p>`;
-};
-
-async function getAIResponse() {
-    try {
-        const apiKey = window.apiKey;
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-                model: 'gpt-3.5-turbo',
-                messages: conversationHistory,
-                max_tokens: 100,
-                n: 1,
-                stop: null,
-                temperature: 0.7
-            })
+        startButton.addEventListener('click', () => {
+            recognition.start();
         });
 
-        const data = await response.json();
-        if (response.ok) {
-            const aiMessage = data.choices[0].message.content.trim();
-            return aiMessage;
-        } else {
-            console.error('API error:', data);
-            return 'エラーが発生しました。もう一度試してください。';
+        recognition.onresult = async (event) => {
+            const transcript = event.results[event.resultIndex][0].transcript.trim();
+            output.innerHTML += `<p><strong>ユーザー:</strong> ${transcript}</p>`;
+            try {
+                const aiResponse = await getAIResponse(transcript);
+                output.innerHTML += `<p><strong>AI:</strong> ${aiResponse}</p>`;
+                speak(aiResponse);
+            } catch (error) {
+                console.error('Error getting AI response:', error);
+                output.innerHTML += `<p><strong>AI:</strong> エラーが発生しました。${error.message}</p>`;
+            }
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Recognition error:', event.error);
+            output.innerHTML += `<p><strong>エラー:</strong> 音声認識エラーが発生しました。${event.error}</p>`;
+        };
+
+        async function getAIResponse(text) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            try {
+                const response = await fetch('/api/gemini', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({ text: text })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+
+                const data = await response.json();
+                return data.response;
+            } catch (error) {
+                console.error('Failed to get response from API:', error);
+                return `Error: ${error.message}`;
+            }
         }
-    } catch (error) {
-        console.error('Fetch error:', error);
-        return 'エラーが発生しました。ネットワークを確認してください。';
-    }
-}
 
-async function speakWithGammaWaveEffect(text) {
-    return new Promise((resolve, reject) => {
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'ja-JP';
-
-        utterance.onstart = () => {
-            isSpeaking = true;
-        };
-
-        utterance.onend = async () => {
-            isSpeaking = false;
-            await applyGammaWaveEffect();
-            recognition.start();
-            resolve();
-        };
-
-        synth.speak(utterance);
-    });
-}
-
-async function applyGammaWaveEffect() {
-    const audioContext = new AudioContext();
-    const oscillator = audioContext.createOscillator();
-    oscillator.type = 'sine';
-    oscillator.frequency.value = 40; // ガンマ波の周波数帯域を設定
-    const gainNode = audioContext.createGain();
-    gainNode.gain.value = 0.5;
-
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    oscillator.start();
-    setTimeout(() => oscillator.stop(), 500); // 0.5秒間ガンマ波を再生
-}
-
-function startConversationTimeout() {
-    clearTimeout(conversationTimeout);
-    conversationTimeout = setTimeout(() => {
-        output.innerHTML += '<p><strong>AI:</strong> 5分が経過しました。一旦会話を終了します。</p>';
-        speak('5分が経過しました。一旦会話を終了します。');
-        recognition.stop();
-    }, 5 * 60 * 1000);
-}
-
-</script>
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'ja-JP';
+            synth.speak(utterance);
+        }
+    </script>
 </body>
 </html>
