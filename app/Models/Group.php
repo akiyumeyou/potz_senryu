@@ -8,22 +8,11 @@ class Group extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'groupname', 'creator_user', 'ai_flg', 'ai_userid',
-    ];
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'creator_user');
-    }
-
-    public function aiUser()
-    {
-        return $this->belongsTo(User::class, 'ai_userid');
-    }
+    protected $fillable = ['groupname', 'creator_user', 'ai_flg', 'ai_userid'];
 
     public function members()
     {
         return $this->hasMany(GroupMember::class);
     }
 }
+

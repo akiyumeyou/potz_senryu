@@ -14,6 +14,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupMemberController;
 
 
+
 Route::get('/', function () {
     return view('auth.login');
 });
@@ -46,6 +47,12 @@ Route::post('/users', [UserController::class, 'store'])->name('users.store')->mi
 Route::get('/register-user', function () {
     return view('register_user');
 })->name('register.user')->middleware('auth');
+
+Route::resource('groups', GroupController::class);
+Route::resource('members', GroupMemberController::class);
+
+Route::get('register_user', [UserController::class, 'create'])->name('register_user');
+Route::post('register_user', [UserController::class, 'store'])->name('register_user.store');
 
 Route::post('/users', [UserController::class, 'store'])->name('users.store')->middleware('auth');
 

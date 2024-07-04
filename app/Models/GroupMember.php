@@ -9,9 +9,7 @@ class GroupMember extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'group_id', 'user_id', 'relationship',
-    ];
+    protected $fillable = ['group_id', 'user_id', 'last_read_message_id'];
 
     public function group()
     {
@@ -23,3 +21,4 @@ class GroupMember extends Model
         return $this->belongsTo(User::class);
     }
 }
+

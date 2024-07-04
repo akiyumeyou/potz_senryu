@@ -1,75 +1,43 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Group;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 
 class GroupController extends Controller
 {
+    public function index()
+    {
+        $groups = Group::where('creator_user', Auth::id())->get();
+        return view('groups.index', compact('groups'));
+    }
+
+    public function create()
+    {
+        $group = Group::where('creator_user', Auth::id())->first();
+        return view('groups.create', compact('group'));
+    }
+
     public function store(Request $request)
     {
-        $request->validate([
-            'groupname' => 'required|string|max:255',
-            'ai_flg' => 'boolean',
-            'ai_userid' => 'nullable|exists:users,id',
-        ]);
+        $request->validate(['groupname' => 'required|string|max:255']);
 
-        $group = Group::create([
-            'groupname' => $request->groupname,
-            'creator_user' => Auth::id(),
-            'ai_flg' => $request->ai_flg ?? false,
-            'ai_userid' => $request->ai_userid,
-        ]);
+        $group = new Group();
+        $group->groupname = $request->groupname;
+        $group->creator_user = Auth::id();
+        $group->save();
 
-        return response()->json([
-            'message' => 'Group successfully created',
-            'group' => $group
-        ], 201);
-    }
-        public function create()
-        {
-            return view('groups.create');
-        }
-
-        public function store(Request $request)
-        {
-            $request->validate([
-                'name' => 'required|string|max:255',
-            ]);
-
-            $group = Group::create([
-                'name' => $request->name,
-                'admin_id' => auth()->id(),
-            ]);
-
-            return redirect()->route('groups.show', $group);
-        }
-
-        public function show(Group $group)
-        {
-            $members = $group->members;
-            return view('groups.show', compact('group', 'members'));
-        }
-
-        public function addMember(Request $request, Group $group)
-        {
-            $request->validate([
-                'email' => 'required|email',
-            ]);
-
-            $user = User::where('email', $request->email)->first();
-
-            if (!$user) {
-                // Redirect to registration form
-                return redirect()->route('register')->with('email', $request->email);
-            }
-
-            $group->members()->attach($user->id);
-
-            return redirect()->route('groups.show', $group);
-        }
+        return redirect()->route('groups.create')->with('success', 'Group created successfully');
     }
 
+    public function update(Request $request, Group $group)
+    {
+        $request->validate(['groupname' => 'required|string|max:255']);
+
+        $group->groupname = $request->groupname;
+        $group->save();
+
+        return redirect()->route('groups.create')->with('success', 'Group updated successfully');
+    }
 }

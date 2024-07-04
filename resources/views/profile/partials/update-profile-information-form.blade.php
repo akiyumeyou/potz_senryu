@@ -8,9 +8,11 @@
             {{ __("Update your account's profile information and email address.") }}
         </p>
         <nav class="mt-4">
-            <a href="{{ route('register.user') }}" class="text-blue-500 hover:underline">家族の登録ページ</a>
+            <a href="{{ route('groups.create') }}" class="text-blue-500 hover:underline">MYグループ
         </nav>
-
+        <nav class="mt-4">
+            <a href="{{ route('register.user') }}" class="text-blue-500 hover:underline">私以外の会員の登録
+        </nav>
 
     </header>
 

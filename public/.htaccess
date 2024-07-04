@@ -20,3 +20,7 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
+<IfModule mod_headers.c>
+    Header set Permissions-Policy "accelerometer=(), autoplay=(), clipboard-write=(), encrypted-media=(), gyroscope=(), picture-in-picture=()"
+</IfModule>
+
