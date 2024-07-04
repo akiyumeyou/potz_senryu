@@ -152,8 +152,8 @@
                                     @if(Auth::check() && Auth::id() == $tweet->user_id)
                                         <a href="{{ route('tweets.edit', $tweet->id) }}" class="edit-icon">
                                             <img src="{{ asset('img/hensyu.png') }}" alt="Edit" class="w-5 h-5">
-                                        </a>
-                                    @endif
+                                        @endif
+                                    </a>
                                 </div>
                             </li>
                         @endforeach
@@ -200,15 +200,15 @@
 
     <script>
         function selectStamp(imageUrl) {
+            playSound(); // 音を鳴らす
             document.getElementById('content').value = imageUrl;
             document.getElementById('message_type').value = 'stamp';
             document.getElementById('stamp').value = imageUrl;
             document.getElementById('tweet-form').submit();
-            playSound(); // 音を鳴らす
         }
 
         function playSound() {
-            var audio = new Audio('/sound/syupon01.mp3');
+            var audio = new Audio('{{ asset("sound/syupon01.mp3") }}');
             audio.play().then(() => {
                 console.log("Audio played successfully!");
             }).catch(error => {
@@ -235,5 +235,4 @@
             });
         }
     </script>
-
 </x-app-layout>

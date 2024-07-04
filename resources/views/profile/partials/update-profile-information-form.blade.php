@@ -1,12 +1,17 @@
 <section>
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Profile Information') }}
+            {{ __('登録情報') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
             {{ __("Update your account's profile information and email address.") }}
         </p>
+        <nav class="mt-4">
+            <a href="{{ route('register.user') }}" class="text-blue-500 hover:underline">家族の登録ページ</a>
+        </nav>
+
+
     </header>
 
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
@@ -48,7 +53,7 @@
         </div>
 
         <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+            <x-primary-button>{{ __('保存') }}</x-primary-button>
 
             @if (session('status') === 'profile-updated')
                 <p

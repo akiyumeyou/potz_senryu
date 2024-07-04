@@ -5,74 +5,120 @@ $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), t
 
 <!-- Scripts -->
 <script type="module" src="{{ asset('build/' . $manifest['resources/js/app.js']['file']) }}"></script>
+
+<style>
+    body {
+        background-color: #fff7e6; /* Lighter orange background */
+        font-family: 'Arial', sans-serif;
+    }
+    .container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 2em;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .logo {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1em;
+    }
+    .logo img {
+        max-width: 100px;
+    }
+    h2 {
+        text-align: center;
+        color: #ff6f61;
+    }
+    .form-group {
+        margin-bottom: 1em;
+    }
+    label {
+        font-weight: bold;
+        color: #555;
+    }
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 0.75em;
+        margin-top: 0.5em;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+    input[type="checkbox"] {
+        margin-right: 0.5em;
+    }
+    .btn {
+        background-color: #ff8f61; /* Changed button color */
+        color: #fff;
+        padding: 0.75em;
+        border: none;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 1.1em;
+        cursor: pointer;
+    }
+    .btn:hover {
+        background-color: #ff6f4c; /* Changed button hover color */
+    }
+    .link {
+        text-align: center;
+        display: block;
+        margin-top: 1em;
+        color: #ff6f61;
+        text-decoration: none;
+    }
+    .link:hover {
+        text-decoration: underline;
+    }
+    .google-signin {
+        display: flex;
+        justify-content: center;
+        margin-top: 1em;
+    }
+    .google-signin img {
+        max-width: 200px;
+    }
+</style>
+
 <x-guest-layout>
-    @if (Route::has('login'))
-    <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
-        @auth
-            <a href="{{ url('/dashboard') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Dashboard</a>
-        @else
-            <a href="{{ route('login') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Log in</a>
-
-            @if (Route::has('register'))
-                <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 dark:text-gray-500 underline">Register</a>
-            @endif
-        @endauth
-    </div>
-@endif
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+    <div class="container">
+        <div class="logo">
+            <img src="{{ asset('img/logo.png') }}" alt="Logo"> <!-- Ensure the correct path -->
         </div>
+        <h2>ログイン</h2>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ml-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-between mt-4">
-            <div>
-                @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif
+            <div class="form-group">
+                <label for="email">メールアドレス</label>
+                <input id="email" type="email" name="email" :value="old('email')" required autofocus autocomplete="username">
             </div>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Log in') }}
-                </x-primary-button>
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input id="password" type="password" name="password" required autocomplete="current-password">
             </div>
-        </div>
-    </form>
 
-    <div class="flex items-center justify-end mt-4">
-        <a href="{{ route('login.google') }}" class="ml-3 inline-flex items-center">
-            <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" style="margin-left: 3em;">
-        </a>
+            <div class="form-group">
+                <label for="remember_me">
+                    <input id="remember_me" type="checkbox" name="remember">パスワードを保存
+                </label>
+            </div>
+
+            <button type="submit" class="btn">ログイン</button>
+
+            <a class="link" href="{{ route('password.request') }}">パスワードを忘れたらココ</a>
+
+            <div class="google-signin">
+                <a href="{{ route('login.google') }}">
+                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Sign in with Google">
+                </a>
+            </div>
+
+            <a class="link" href="{{ route('register') }}">先にメールの登録が必要です</a> <!-- Added registration link -->
+        </form>
     </div>
 </x-guest-layout>
-

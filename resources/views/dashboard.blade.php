@@ -8,8 +8,10 @@
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    {{ __("POTZお知らせ(現在お知らせはありません)") }}
+                <div class="p-5 text-3xl text-green-900">
+                    <x-nav-link :href="route('info')" :active="request()->routeIs('info')">
+                        {{ __('お知らせ') }}
+                    </x-nav-link>
                 </div>
             </div>
         </div>

@@ -9,6 +9,9 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\SenryuController;
 use App\Http\Controllers\GoogleLoginController;
 use App\Http\Controllers\OpenAIController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupMemberController;
 
 
 Route::get('/', function () {
@@ -18,6 +21,11 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::get('/info', function () {
+    return view('info');
+})->name('info');
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -32,6 +40,18 @@ Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])
 
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])
     ->name('login.google.callback');
+
+Route::post('/users', [UserController::class, 'store'])->name('users.store')->middleware('auth');
+
+Route::get('/register-user', function () {
+    return view('register_user');
+})->name('register.user')->middleware('auth');
+
+Route::post('/users', [UserController::class, 'store'])->name('users.store')->middleware('auth');
+
+Route::post('/groups', [GroupController::class, 'store'])->name('groups.store')->middleware('auth');
+Route::post('/group-members', [GroupMemberController::class, 'store'])->name('group_members.store')->middleware('auth');
+
 
 Route::post('/stamp/store', [StampController::class, 'store'])->name('stamp.store');
 Route::get('/stamps/create', [StampController::class, 'create'])->name('stamp.create');

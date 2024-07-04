@@ -1,87 +1,97 @@
 <x-app-layout>
-        <style>
-            .sort-text {
-                text-decoration: underline;
-                cursor: pointer;
-            }
-            #displayName {
-                margin-left: auto;
-                padding: 10px;
-            }
-            #aside {
-                width: 22%;
-            }
-            #content {
-                flex-grow: 1;
-                padding: 20px;
-                box-sizing: border-box;
-            }
-            #flex {
-                display: flex;
-                flex-direction: column;
-            }
-            #output {
-                display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
-                gap: 20px;
-            }
+    <!DOCTYPE html>
+    <html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+
+        <title>Youtube一覧</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .sort-text {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+        #displayName {
+            margin-left: auto;
+            padding: 10px;
+        }
+        #aside {
+            width: 22%;
+        }
+        #content {
+            flex-grow: 1;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        #flex {
+            display: flex;
+            flex-direction: column;
+        }
+        #output {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+        .video-info {
+            padding: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 315px; /* 標準の16:9の縦横比 */
+        }
+        button#send {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        div#output p {
+            background-color: white;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        /* .hidden {
+            display: none;
+        } */
+        @media (min-width: 768px) {
             .video-container {
-                width: 100%;
-                max-width: 600px;
-                margin: 20px auto;
-                background-color: #fff;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                border-radius: 5px;
+                width: 48%; /* 画面が狭くなった時の横2列 */
             }
-            .video-info {
-                padding: 10px;
+        }
+        @media (min-width: 1024px) {
+            .video-container {
+                width: 30%; /* 画面が広い時の横3列 */
             }
-            iframe {
-                width: 100%;
-                height: 315px; /* 標準の16:9の縦横比 */
-            }
-            button#send {
-                background-color: green;
-                color: white;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-            div#output p {
-                background-color: white;
-                padding: 10px;
-                margin-bottom: 10px;
-            }
-            .hidden {
-                display: none;
-            }
-            @media (min-width: 768px) {
-                .video-container {
-                    width: 48%; /* 画面が狭くなった時の横2列 */
-                }
-            }
-            @media (min-width: 1024px) {
-                .video-container {
-                    width: 30%; /* 画面が広い時の横3列 */
-                }
-            }
-            body {
-                padding-bottom: 70px; /* フッターの高さを考慮してボディの下部の位置を調整 */
-            }
-        </style>
+        }
+        body {
+            padding-bottom: 70px; /* フッターの高さを考慮してボディの下部の位置を調整 */
+        }
+    </style>
+    </head>
     <body class="bg-orange-100">
 
-    <header class="text-green-800 p-4 flex items-center">
-        <select id="sortOptions" class="bg-green-800 text-white p-2 m-2 rounded">
+    <header class="text-green-800 p-4 flex items-center justify-between">
+        <button id="postButton" class="bg-green-800 text-white p-2 m-2 rounded">新規投稿</button>
+        <select id="sortOptions" class="bg-green-800 text-white p-2 m-2 rounded mx-auto">
             <option value="newest">新着順</option>
             <option value="likes">いいね順</option>
             <option value="senior">シニア会員用</option>
             <option value="support">サポート会員用</option>
             <option value="series">シリーズ</option>
         </select>
-        <button id="postButton" class="bg-green-800 text-white p-2 m-2 ml-auto rounded">投稿</button>
     </header>
 
     <main class="flex flex-wrap justify-center p-4">
@@ -96,7 +106,7 @@
                     <option value="series">シリーズ</option>
                 </select><br>
                 <input type="text" id="youtubeLink" name="youtube_link" class="w-full p-2 mb-4 border" placeholder="YouTubeリンクをここに貼り付け"><br>
-                <button type="submit" id="send" class="bg-green-500 text-white p-2 rounded">送信</button>
+                <button type="submit" id="send" class="bg-green-700 text-white p-2 rounded">送信</button>
             </form>
         </div>
 
@@ -116,6 +126,9 @@
                             @method('DELETE')
                             <button type="submit" class="delete-btn bg-red-500 text-white p-2 rounded">削除</button>
                         </form>
+                    </div>
+                    <div class="mt-2 text-gray-500">
+                        <span>{{ $video->user_name }}</span>
                     </div>
                 </div>
             </div>
@@ -185,4 +198,3 @@
     </body>
     </html>
 </x-app-layout>
-

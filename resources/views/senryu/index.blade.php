@@ -47,6 +47,20 @@
                 width: 100%;
                 height: 560px; /* カードの高さを調整 */
             }
+            .sort-buttons {
+                display: flex;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            .sort-buttons button {
+                background-color: green;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                margin: 0 10px;
+                cursor: pointer;
+            }
         </style>
     </head>
     <body class="bg-yellow-50 flex flex-col items-center justify-center min-h-screen py-20">
@@ -55,9 +69,15 @@
                 <a href="{{ route('senryus.create') }}" class="ml-4 text-white bg-green-900 hover:bg-green-700 px-4 py-2 rounded">新規投稿</a>
             </nav>
         </header>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-11/12 mx-auto">
+
+        <div class="sort-buttons">
+            <button id="sortNewest">新着順</button>
+            <button id="sortLikes">いいね順</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-11/12 mx-auto" id="senryuContainer">
             @foreach ($senryus as $senryu)
-                <div class="bg-white p-4 rounded-lg shadow-lg senryu-item">
+                <div class="bg-white p-4 rounded-lg shadow-lg senryu-item" data-id="{{ $senryu->id }}" data-date="{{ $senryu->created_at }}" data-likes="{{ $senryu->iine }}">
                     <div class="senryu-text">
                         <p>{{ $senryu->s_text1 }}</p>
                         <p>{{ $senryu->s_text2 }}</p>
@@ -84,45 +104,39 @@
                 </div>
             @endforeach
         </div>
+
         <footer id="footer" class="w-full bg-green-800 text-white text-center p-2 fixed bottom-0">
             <img src="{{ asset('img/logo.png') }}" alt="potz" class="inline-block w-8 h-8">
             <a href="https://potz.jp/" class="text-white underline">https://potz.jp/</a>
         </footer>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('.iine-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const senryuId = this.getAttribute('data-id');
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const senryuContainer = document.getElementById('senryuContainer');
+                const sortNewest = document.getElementById('sortNewest');
+                const sortLikes = document.getElementById('sortLikes');
 
-                fetch(`/senryus/${senryuId}/iine`, {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data && typeof data.iine !== 'undefined') {
-                        // いいね数に基づいてアイコンを更新
-                        const heartIcon = data.iine > 0 ? '❤️' : '♡';
-                        this.innerHTML = `${heartIcon} ${data.iine}`;
-                    } else {
-                        console.error('Error: Invalid data format');
-                    }
-                })
-                .catch(error => console.error('Error:', error));
+                function sortSenryus(sortBy) {
+                    const senryuItems = Array.from(senryuContainer.children);
+
+                    senryuItems.sort((a, b) => {
+                        if (sortBy === 'newest') {
+                            return new Date(b.dataset.date) - new Date(a.dataset.date);
+                        } else if (sortBy === 'likes') {
+                            return parseInt(b.dataset.likes) - parseInt(a.dataset.likes);
+                        }
+                    });
+
+                    senryuContainer.innerHTML = '';
+                    senryuItems.forEach(item => senryuContainer.appendChild(item));
+                }
+
+                sortNewest.addEventListener('click', () => sortSenryus('newest'));
+                sortLikes.addEventListener('click', () => sortSenryus('likes'));
+
+                sortSenryus('newest'); // デフォルトで新着順にソート
             });
-        });
-    });
-    </script>
+        </script>
     </body>
     </html>
-    </x-app-layout>
+</x-app-layout>
