@@ -96,3 +96,14 @@ Route::get('/youtube', [YouTubeController::class, 'index'])->name('youtube.index
 Route::post('/store', [YouTubeController::class, 'store'])->name('youtube.store');
 Route::post('/update-likes/{id}', [YouTubeController::class, 'updateLikes'])->name('youtube.updateLikes');
 Route::delete('/destroy/{id}', [YouTubeController::class, 'destroy'])->name('youtube.destroy');
+
+use App\Http\Controllers\EventController;
+
+Route::middleware('auth')->group(function () {
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+    Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
+    Route::post('/events', [EventController::class, 'store'])->name('events.store');
+    Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
+    Route::patch('/events/{event}', [EventController::class, 'update'])->name('events.update');
+    Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+});

@@ -24,6 +24,9 @@
                     <x-nav-link :href="route('youtube.index')" :active="request()->routeIs('youtube.index')" class="{{ request()->routeIs('youtube.index') ? 'text-green-900 font-bold text-xl underline' : 'text-gray-500 hover:text-gray-700 text-lg' }}">
                         {{ __('動画') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('youtube.index')" :active="request()->routeIs('events.index')" class="{{ request()->routeIs('events.index') ? 'text-green-900 font-bold text-xl underline' : 'text-gray-500 hover:text-gray-700 text-lg' }}">
+                        {{ __('オンライン') }}
+                    </x-nav-link>
                 </div>
             </div>
 
