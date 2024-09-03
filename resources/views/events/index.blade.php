@@ -10,6 +10,11 @@
         .btn-orange:hover {
             background-color: #FF8C00; /* オレンジ色のホバー状態 */
         }
+
+        /* 全体の文字サイズを16pxに設定 */
+        body {
+            font-size: 16px;
+        }
     </style>
 
     <body class="bg-gray-100">
@@ -29,8 +34,8 @@
                     <div class="bg-white shadow-md rounded-lg p-6">
                         <h2 class="text-xl font-bold mb-2">{{ $event->title }}</h2>
                         @if($event->image_path)
-                            <img src="{{ Storage::url($event->image_path) }}" alt="イベント画像" class="mb-4 rounded-lg">
-                        @endif
+                        <img src="{{ $event->getImageUrl() }}" alt="イベント画像" class="mb-4 rounded-lg">
+                    @endif
                         <p class="mb-1">開催日: {{ $event->getDisplayEventDate() }}</p>
                         <p class="mb-1">時間: {{ $event->start_time }} - {{ $event->end_time }}</p>
                         <p class="mb-1">内容: {{ $event->content }}</p>

@@ -79,7 +79,25 @@ $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), t
         margin-top: 1em;
     }
     .google-signin img {
-        max-width: 200px;
+        max-width: 250px; /* Increased the size of the Google sign-in button */
+    }
+    .separator {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 20px 0;
+    }
+    .separator:before,
+    .separator:after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid #ddd;
+    }
+    .separator:not(:empty)::before {
+        margin-right: .25em;
+    }
+    .separator:not(:empty)::after {
+        margin-left: .25em;
     }
 </style>
 
@@ -88,9 +106,19 @@ $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), t
         <div class="logo">
             <img src="{{ asset('img/logo.png') }}" alt="Logo"> <!-- Ensure the correct path -->
         </div>
-        <h2>ログイン</h2>
+        <h2>Gmailでログイン</h2>
         <form method="POST" action="{{ route('login') }}">
             @csrf
+
+            <div class="google-signin">
+                <a href="{{ route('login.google') }}">
+                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Sign in with Google">
+                </a>
+            </div>
+
+            <div class="separator">または</div>
+
+            <a class="link" href="{{ route('register') }}">Gmail以外でのログイン<br>には先にメールの登録が必要です</a> <!-- Added registration link -->
 
             <div class="form-group">
                 <label for="email">メールアドレス</label>
@@ -112,13 +140,6 @@ $manifest = json_decode(file_get_contents(public_path('build/manifest.json')), t
 
             <a class="link" href="{{ route('password.request') }}">パスワードを忘れたらココ</a>
 
-            <div class="google-signin">
-                <a href="{{ route('login.google') }}">
-                    <img src="https://developers.google.com/identity/images/btn_google_signin_dark_normal_web.png" alt="Sign in with Google">
-                </a>
-            </div>
-
-            <a class="link" href="{{ route('register') }}">先にメールの登録が必要です</a> <!-- Added registration link -->
         </form>
     </div>
 </x-guest-layout>

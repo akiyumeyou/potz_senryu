@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -65,8 +66,22 @@ class Event extends Model
                 $nextEventDate = $eventDate->addMonth();
                 break;
             default:
-                $nextEventDate = $eventDate;
-                break;
+                return null; // 正しくない場合はnullを返す
+        }
+
+        // 次回の開催日時が現在の日時よりも過去であれば、さらに繰り返し
+        while ($nextEventDate->lt(Carbon::now())) {
+            switch ($this->recurring_type) {
+                case 'weekly':
+                    $nextEventDate->addWeek();
+                    break;
+                case 'biweekly':
+                    $nextEventDate->addWeeks(2);
+                    break;
+                case 'monthly':
+                    $nextEventDate->addMonth();
+                    break;
+            }
         }
 
         return $nextEventDate->toDateString();
@@ -79,6 +94,23 @@ class Event extends Model
             return $this->event_date;
         }
 
-        return $this->getNextEventDate();
+        // 次回の日程が設定されていれば、その日程をセット
+        $nextEventDate = $this->getNextEventDate();
+        if ($nextEventDate) {
+            $this->event_date = $nextEventDate;
+            $this->save(); // 日付を保存
+        }
+
+        return $this->event_date;
+    }
+
+    // イメージURLを取得するメソッド
+    public function getImageUrl()
+    {
+        if ($this->image_path) {
+            return asset('storage/' . $this->image_path);
+        }
+
+        return null;
     }
 }

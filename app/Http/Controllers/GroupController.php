@@ -40,4 +40,11 @@ class GroupController extends Controller
 
         return redirect()->route('groups.create')->with('success', 'Group updated successfully');
     }
+
+    public function edit($id)
+    {
+        $group = Group::with('members.user')->findOrFail($id);
+        return view('groups.edit', compact('group'));
+    }
+
 }
